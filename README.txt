@@ -1,53 +1,51 @@
 -------------------------------------------
-Source installation information for modders
+Minecraft Mod: Better Directions (IPASS opdracht)
 -------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+Voor mijn IPASS opdracht heb ik een minecraft mod geschreven die gebruik maakt
+van Dijkstra's 'Fastest path' Algoritme. Deze mod laat je waypoints zetten op meerder plekken,
+waarna je daar een weg naartoe kunt vragen waar je ook bent.
 
-Note also that the patches are built against "unrenamed" MCP source code (aka
-srgnames) - this means that you will not be able to read them directly against
-normal code.
 
-Source pack installation information:
-
-Standalone source installation
+Hoe werkt deze mod?
 ==============================
 
-See the Forge Documentation online for more detailed instructions:
-http://mcforge.readthedocs.io/en/latest/gettingstarted/
+Deze mod werkt heel simpel, je hoeft simpelweg op 'B' te drukken om een waypoint te zetten.
+Dan druk je op 'V' om een lijst van je waypoint te kunnen zien, als je er dan op 1 drukt,
+dan zal deze mod de snelste weg voor je zoeken waarbij hij ook rekening houdt met eventuele obstakels,
+zoals een ravijn of een hoge berg. Deze weg zal hij aan je laten zien d.m.v pijlen op de grond.
 
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
+Als je je weg hebt gevonden en je wilt de pijlen niet meer zien, dan druk je simpelweg op 'N',
+en dan verdwijnen de pijlen weer.
 
-Step 2: You're left with a choice.
-If you prefer to use Eclipse:
-1. Run the following command: "gradlew genEclipseRuns" (./gradlew genEclipseRuns if you are on Mac/Linux)
-2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
-   or run "gradlew eclipse" to generate the project.
-(Current Issue)
-4. Open Project > Run/Debug Settings > Edit runClient and runServer > Environment
-5. Edit MOD_CLASSES to show [modid]%%[Path]; 2 times rather then the generated 4.
+KEYBINDINGS:
+    B = set waypoint
+    V = see waypoints
+    N = remove arrows
 
-If you prefer to use IntelliJ:
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Run the following command: "gradlew genIntellijRuns" (./gradlew genIntellijRuns if you are on Mac/Linux)
-4. Refresh the Gradle Project in IDEA if required.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can run "gradlew --refresh-dependencies" to refresh the local cache. "gradlew clean" to reset everything {this does not affect your code} and then start the processs again.
-
-Should it still not work, 
-Refer to #ForgeGradle on EsperNet for more information about the gradle environment.
-or the Forge Project Discord discord.gg/UvedJ9m
-
-Forge source installation
+Algoritme:
 =========================
-MinecraftForge ships with this code and installs it as part of the forge
-installation process, no further action is required on your part.
 
-LexManos' Install Video
+Deze mod maakt gebruik van Dijkstra's 'Fastest path' algoritme om de snelste weg te vinden, alleen daarvoor
+heeft hij wel 'nodes' nodig tussen de speler en de waypoint om die te kunnen vinden. De mod genereert deze nodes
+in een chunk zodra deze voor de eerste keer geladen wordt, en slaat ze dan op in een json bestand.
+
+(Een chunk is 16x16)
+Hoeveel 'nodes' er gegenereert worden hangt af van de gebruiker, standaard staat dit op 4 'nodes' per chunk.
+Er kan/kunnen minimaal 1 en maximaal 256 (16x16) 'nodes' worden gegenereert per chunk. Hoe meer 'nodes' er
+worden gegenereert hoe beter het algoritme zal werken.
+
+Code:
+=========================
+
+De code staat in 'src/main/java/com/spacialnightmare/betterdirections' (verdeeld over meerdere packages)
+In 'src/main/resources/assets' staan eventuele files die nodig zijn voor de mod.
+
+Bronnen:
 =======================
-https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
+https://www.udemy.com/course/make-a-minecraft-mod-minecraft-modding-for-beginners-116/
+        - Had ik lang geleden al een keer gebruikt, maar hier legt hij de basis heel goed uit.
+          En de indeling van mappen&packages heb ik hier ook vandaan
 
-For more details update more often refer to the Forge Forums:
-http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
+http://jabelarminecraft.blogspot.com/p/minecraft-forge-1721710-keybinding.html
+        - Simpele manier voor de Keybinds
