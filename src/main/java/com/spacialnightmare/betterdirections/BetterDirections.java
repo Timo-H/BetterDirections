@@ -1,5 +1,9 @@
 package com.spacialnightmare.betterdirections;
 
+import com.spacialnightmare.betterdirections.events.ModEvents;
+import com.spacialnightmare.betterdirections.setup.ClientProxy;
+import com.spacialnightmare.betterdirections.setup.IProxy;
+import com.spacialnightmare.betterdirections.setup.ServerProxy;
 import com.spacialnightmare.betterdirections.util.Config;
 import com.spacialnightmare.betterdirections.util.Registration;
 import net.minecraft.block.Block;
@@ -7,6 +11,7 @@ import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -29,9 +34,14 @@ public class BetterDirections
 {
     public static final String MOD_ID = "betterdirections";
     // Directly reference a log4j logger.
+
+    public static IProxy proxy;
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     public BetterDirections() {
+        proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
@@ -45,7 +55,7 @@ public class BetterDirections
     {
         registerConfigs();
 
-
+        proxy.init();
 
         loadConfigs();
          }
@@ -61,14 +71,10 @@ public class BetterDirections
     }
 
     private void registerModAdditions() {
-        // Inits the registration of our additions
+        // Inits the registration of the mod additions
         Registration.init();
 
-
-    }
-
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        // Register the events added by the mod
+        MinecraftForge.EVENT_BUS.register(new ModEvents());
     }
 }
