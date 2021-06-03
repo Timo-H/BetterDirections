@@ -1,7 +1,6 @@
 package com.spacialnightmare.betterdirections.setup;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
-import com.spacialnightmare.betterdirections.util.Registration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.world.World;
