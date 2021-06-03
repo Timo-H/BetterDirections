@@ -43,9 +43,12 @@ In 'src/main/resources/assets' staan eventuele files die nodig zijn voor de mod.
 
 Bronnen:
 =======================
+https://mcforge.readthedocs.io/en/latest/
+        - Officiele documentatie voor MinecraftForge
+
 https://www.udemy.com/course/make-a-minecraft-mod-minecraft-modding-for-beginners-116/
         - Had ik lang geleden al een keer gebruikt, maar hier legt hij de basis heel goed uit.
           En de indeling van mappen&packages heb ik hier ook vandaan
 
 http://jabelarminecraft.blogspot.com/p/minecraft-forge-1721710-keybinding.html
-        - Simpele manier voor de Keybinds
+        - Simpele manier voor de Keybinds (Is beetje outdated maar kon nog wel wat in mijn code toepassen)
