@@ -27,8 +27,9 @@ public class Config {
     private static void nodesPerChunk(ForgeConfigSpec.Builder SERVER_BUILDER,
                                       ForgeConfigSpec.Builder CLIENT_BUILDER) {
         NODES_PER_CHUNK = CLIENT_BUILDER.comment("How many nodes get generated per chunk, " +
-                "the more generated the more accurate the pathing will be")
-                .defineInRange("nodes_per_chunk", 4, 1, 256);
+                "the more generated the more accurate the pathing will be.\n Amount of nodes can be: 16, 64, 256. " +
+                "Anything else will not work!")
+                .defineInRange("nodes_per_chunk", 16, 16, 256);
     }
 
     public static void loadConfigFile(ForgeConfigSpec config, String path) {

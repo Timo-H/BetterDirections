@@ -1,5 +1,6 @@
 package com.spacialnightmare.betterdirections;
 
+import com.spacialnightmare.betterdirections.data.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.events.ModEvents;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.setup.ClientProxy;
