@@ -1,3 +1,5 @@
 {
-  "item.betterdirections.wayward_compass": "Wayward Compass"
+  "item.betterdirections.wayward_compass": "Wayward Compass",
+
+  "message.toggle_nodes": "Toggle Nodes Visibility"
 }

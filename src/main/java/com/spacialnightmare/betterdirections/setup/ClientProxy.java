@@ -16,11 +16,12 @@ public class ClientProxy implements IProxy{
     @Override
     public void init() {
         // Make keybindings for easy use of the mod
-        keyBindings = new KeyBinding[3];
+        keyBindings = new KeyBinding[4];
 
-        keyBindings[1] = new KeyBinding("key.see_all_waypoins.desc", 65, "key.mod_keybinds.category");
-        keyBindings[0] = new KeyBinding("key.set_waypoint.desc", 66, "key.mod_keybinds.category");
-        keyBindings[2] = new KeyBinding("key.remove_arrows.desc", 67, "key.mod_keybinds.category");
+        keyBindings[1] = new KeyBinding("key.toggle_node_visibility.desc", 66, "key.mod_keybinds.category");
+        keyBindings[0] = new KeyBinding("key.set_waypoint.desc", 86, "key.mod_keybinds.category");
+        keyBindings[2] = new KeyBinding("key.remove_arrows.desc", 78, "key.mod_keybinds.category");
+        keyBindings[3] = new KeyBinding("key.see_all_waypoins.desc", 77, "key.mod_keybinds.category");
 
         // Register the keybindings
         for (int i = 0; i < keyBindings.length; ++i) {

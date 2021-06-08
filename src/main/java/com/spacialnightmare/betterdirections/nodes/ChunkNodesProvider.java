@@ -1,4 +1,4 @@
-package com.spacialnightmare.betterdirections.data;
+package com.spacialnightmare.betterdirections.nodes;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

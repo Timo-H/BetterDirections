@@ -1,45 +1,30 @@
 package com.spacialnightmare.betterdirections.events;
 
-import com.spacialnightmare.betterdirections.BetterDirections;
-import com.spacialnightmare.betterdirections.data.CapabilityChunkNodes;
-import com.spacialnightmare.betterdirections.data.ChunkNodesProvider;
-import com.spacialnightmare.betterdirections.data.CreateNodes;
+import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
+import com.spacialnightmare.betterdirections.nodes.CreateNodes;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.setup.ClientProxy;
+import com.spacialnightmare.betterdirections.world.CapabilityForcedChunks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
+import java.util.*;
+
 
 public class ModEvents {
-    // Activates each time a chunk is created and attaches a capability to it
-    @SubscribeEvent
-    public void AttachCapability(AttachCapabilitiesEvent<Chunk> event) {
-        ChunkNodesProvider provider = new ChunkNodesProvider();
-        event.addCapability(new ResourceLocation(BetterDirections.MOD_ID, "nodes"), provider);
-        event.addListener(provider::invalidate);
-    }
-
-    // Activates each time a chunk is loaded and creates the nodes for that chunk if they are not yet created, or if
-    // the Integer NODES_PER_CHUNK was changed in the config
-    @SubscribeEvent
-    public void Chunkload(ChunkEvent.Load event) {
-        System.out.println(event.getChunk().getPos());
-            Chunk chunk = (Chunk) event.getChunk();
-            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-                if (CreateNodes.CheckExistingNodes(h.getNodes())) {
-                    CreateNodes.CreateChunkNodes(chunk, (World) event.getWorld());
-                }
-            });
-    }
+    private boolean VisibleNodes = false;
+    private boolean NodesVisible = false;
 
     // Activates each time the player right clicks
     @SubscribeEvent
@@ -52,16 +37,54 @@ public class ModEvents {
     // Activates each time a key is pressed and looks if it matches with one of the set keybindings
     @SubscribeEvent
     public void Keyhandler(InputEvent.KeyInputEvent event) {
+
         KeyBinding[] keyBindings = ClientProxy.keyBindings;
+        PlayerEntity player = Minecraft.getInstance().player;
+        World world = player.world;
 
+        // if V is pressed
         if (keyBindings[0].isPressed()) {
-            System.out.println("B is pressed!");
+            Minecraft.getInstance().player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
+            VisibleNodes = !VisibleNodes;
 
+            Chunk chunk = world.getChunk(player.chunkCoordX, player.chunkCoordZ);
+            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
+                for (ArrayList<Integer> node : h.getNodes()) {
+                    System.out.println(node);
+                    CreateNodes.ShowNode(new BlockPos(node.get(0), 75, node.get(2)), world, VisibleNodes);
+                }
+            });
+
+        // if B is pressed
+        } else if (keyBindings[1].isPressed()) {
+            player.sendMessage(new TranslationTextComponent("Height: " + world.getHeight(Heightmap.Type.WORLD_SURFACE, player.getPosition().getX(),
+                    player.getPosition().getZ())), player.getUniqueID());
+
+        // if N is pressed
+        } else if (keyBindings[2].isPressed()) {
+            // if chunk is not loaded, load the chunk
+            ((ServerWorld) world).forceChunk(128,0 , true);
+            player.sendMessage(new TranslationTextComponent("Chunk Loaded"), player.getUniqueID());
+
+            // get the nodes from the chunk
+            player.sendMessage(new TranslationTextComponent("N is pressed"), player.getUniqueID());
+            world.getChunkAt(new BlockPos(128, 65, 0)).getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(n -> {
+                player.sendMessage(new TranslationTextComponent("Node 0: " + n.getNodes().get(0)),
+                        player.getUniqueID());
+                });
+
+        // if M is pressed
+        } else if (keyBindings[3]. isPressed()) {
+            player.sendMessage(new TranslationTextComponent("M is pressed"), player.getUniqueID());
+            ServerWorld serverWorld = (ServerWorld) world;
+            if (serverWorld.isRemote) return;
         }
     }
 
     @SubscribeEvent
     public void init(final FMLCommonSetupEvent event) {
         CapabilityChunkNodes.register();
+        CapabilityForcedChunks.register();
     }
+
 }

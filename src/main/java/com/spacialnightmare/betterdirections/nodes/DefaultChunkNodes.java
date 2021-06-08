@@ -1,4 +1,4 @@
-package com.spacialnightmare.betterdirections.data;
+package com.spacialnightmare.betterdirections.nodes;
 
 import java.util.ArrayList;
 

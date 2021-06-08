@@ -1,4 +1,4 @@
-package com.spacialnightmare.betterdirections.data;
+package com.spacialnightmare.betterdirections.nodes;
 
 import com.spacialnightmare.betterdirections.util.Config;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,6 +9,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class CapabilityChunkNodes {
 
@@ -25,19 +26,25 @@ public class CapabilityChunkNodes {
         @Override
         public INBT writeNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
-            if (Config.NODES_PER_CHUNK.get() == 256) {
-                for (int i = 0; i < 16; i++) {
-                    tag.putInt("node" + i + "X", instance.getNodes().get(i).get(0));
-                    tag.putInt("node" + i + "Y", instance.getNodes().get(i).get(1));
-                    tag.putInt("node" + i + "Z", instance.getNodes().get(i).get(2));
-                }
+            for (int i = 0; i < Config.NODES_PER_CHUNK.get(); i++) {
+                tag.putInt("node" + i + "X", instance.getNodes().get(i).get(0));
+                tag.putInt("node" + i + "Y", instance.getNodes().get(i).get(1));
+                tag.putInt("node" + i + "Z", instance.getNodes().get(i).get(2));
             }
             return tag;
         }
 
         @Override
         public void readNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side, INBT nbt) {
-
+            ArrayList<ArrayList<Integer>> nodes = new ArrayList<>();
+            for (int i = 0; i < Config.NODES_PER_CHUNK.get(); i++) {
+                ArrayList<Integer> node = new ArrayList<>();
+                node.add(((CompoundNBT) nbt).getInt("node" + i + "X"));
+                node.add(((CompoundNBT) nbt).getInt("node" + i + "Y"));
+                node.add(((CompoundNBT) nbt).getInt("node" + i + "Z"));
+                nodes.add(node);
+            }
+            instance.setNodes(nodes);
         }
     }
 }
