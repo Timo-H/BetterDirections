@@ -2,6 +2,7 @@ package com.spacialnightmare.betterdirections;
 
 import com.spacialnightmare.betterdirections.events.ModEvents;
 import com.spacialnightmare.betterdirections.item.ModItems;
+import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeEventHandler;
 import com.spacialnightmare.betterdirections.setup.ClientProxy;
@@ -50,6 +51,8 @@ public class BetterDirections
         proxy.init();
 
         loadConfigs();
+
+        ModNetwork.init();
 
         CapabilityChunkNodes.register();
          }

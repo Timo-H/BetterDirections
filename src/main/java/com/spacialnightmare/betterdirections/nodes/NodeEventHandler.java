@@ -24,7 +24,6 @@ public class NodeEventHandler {
     // the Integer NODES_PER_CHUNK was changed in the config
     @SubscribeEvent
     public void Chunkload(ChunkEvent.Load event) {
-        System.out.println("Chunk Loading");
         World world = null;
         Chunk chunk = null;
         if (event.getWorld() != null && event.getChunk() != null) {
@@ -34,7 +33,6 @@ public class NodeEventHandler {
 
         assert world != null;
         if (!world.isRemote) {
-            System.out.println("ServerWorld");
             Chunk finalChunk = chunk;
             World finalWorld = world;
             chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
