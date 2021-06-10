@@ -1,9 +1,7 @@
 package com.spacialnightmare.betterdirections.nodes;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -16,31 +14,34 @@ public class NodeEventHandler {
     @SubscribeEvent
     public void AttachChunkCapability(AttachCapabilitiesEvent<Chunk> event) {
         ChunkNodesProvider provider = new ChunkNodesProvider();
-        event.addCapability(new ResourceLocation(BetterDirections.MOD_ID, "nodes"), provider);
-        event.addListener(provider::invalidate);
+        if (event.getCapabilities().isEmpty()) {
+            event.addCapability(new ResourceLocation(BetterDirections.MOD_ID, "nodes"), provider);
+            event.addListener(provider::invalidate);
+        }
     }
 
     // Activates each time a chunk is loaded and creates the nodes for that chunk if they are not yet created, or if
     // the Integer NODES_PER_CHUNK was changed in the config
     @SubscribeEvent
     public void Chunkload(ChunkEvent.Load event) {
-        World world = (World) event.getWorld();
-        Chunk chunk = (Chunk) event.getChunk();
-        chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-            if (CreateNodes.CheckExistingNodes(h.getNodes())) {
-                CreateNodes.CreateChunkNodes(chunk, world);
-            }
-        });
-    }
+        System.out.println("Chunk Loading");
+        World world = null;
+        Chunk chunk = null;
+        if (event.getWorld() != null && event.getChunk() != null) {
+            world = (World) event.getWorld();
+            chunk = (Chunk) event.getChunk();
+        }
 
-    @SubscribeEvent
-    public void ChunkUnload(ChunkEvent.Unload event) {
-        Chunk chunk = (Chunk) event.getChunk();
-        chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-            if (chunk.getPos().z == 0) {
-                Minecraft.getInstance().player.sendStatusMessage(new TranslationTextComponent(
-                        "Chunk Unloaded" + h.getNodes().get(0)),true);
-            }
-        });
+        assert world != null;
+        if (!world.isRemote) {
+            System.out.println("ServerWorld");
+            Chunk finalChunk = chunk;
+            World finalWorld = world;
+            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
+                if (CreateNodes.CheckExistingNodes(h.getNodes())) {
+                    CreateNodes.CreateChunkNodes(finalChunk, finalWorld);
+                }
+            });
+        }
     }
 }

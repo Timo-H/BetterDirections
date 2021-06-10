@@ -1,18 +1,20 @@
 package com.spacialnightmare.betterdirections.nodes;
 
+import net.minecraft.util.math.BlockPos;
+
 import java.util.ArrayList;
 
 public class DefaultChunkNodes implements IChunkNodes {
 
-    private ArrayList<ArrayList<Integer>> nodes;
+    private ArrayList<BlockPos> nodes;
 
     @Override
-    public void setNodes(ArrayList<ArrayList<Integer>> nodes) {
+    public void setNodes(ArrayList<BlockPos> nodes) {
         this.nodes = nodes;
     }
 
     @Override
-    public ArrayList<ArrayList<Integer>> getNodes() {
+    public ArrayList<BlockPos> getNodes() {
         return nodes;
     }
 }

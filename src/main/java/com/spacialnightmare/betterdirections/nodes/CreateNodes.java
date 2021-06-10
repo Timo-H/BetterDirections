@@ -13,8 +13,11 @@ import java.util.ArrayList;
 public class CreateNodes {
     // check if there are already nodes created in the chunk, and if so, checks if the amount of nodes is the same as
     // specified in the config
-    public static boolean CheckExistingNodes(@Nullable ArrayList<ArrayList<Integer>> exNodes) {
-        return exNodes == null;
+    public static boolean CheckExistingNodes(@Nullable ArrayList<BlockPos> exNodes) {
+        if (exNodes == null) {
+            return true;
+        }
+        return exNodes.size() != Config.NODES_PER_CHUNK.get();
     }
 
     // Create the nodes for the given chunk, the amount of nodes created depends on the NODES_PER_CHUNK Integer in the config
@@ -30,28 +33,29 @@ public class CreateNodes {
         } else {
             throw new IllegalArgumentException("Integer NODES_PER_CHUNK not correctly assigned!");
         }
-        ArrayList<ArrayList<Integer>> nodes = new ArrayList<>();
-        if (chunk.getPos().z == 0) {
-            System.out.println("0 Chunk Loaded:\nCreating Nodes");
-        }
+        ArrayList<BlockPos> nodes = new ArrayList<>();
+
         // creating rows of nodes
         for (int i = 0; i < 16; i += distanceBetweenNodes) {
             // creating nodes
             for (int j = 0; j < 16; j += distanceBetweenNodes) {
-                int height = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, chunk.getPos().getXStart() + i,
-                            chunk.getPos().getZStart() + j);
 
-                ArrayList<Integer> node = new ArrayList<>();
-                node.add(chunk.getPos().getXStart() + i);
-                node.add(height);
-                node.add(chunk.getPos().getZStart() + j);
+                int x = chunk.getPos().getXStart() + i;
+                int y = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, chunk.getPos().getXStart() + i,
+                        chunk.getPos().getZStart() + j);
+                int z = chunk.getPos().getZStart() + j;
+
+                BlockPos node = new BlockPos(x, y, z);
                 nodes.add(node);
             }
         }
         // saving the nodes to the chunk
-        chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(n -> {
-            n.setNodes(nodes);
-        });
+        if (!world.isRemote) {
+            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(n -> {
+                n.setNodes(nodes);
+                chunk.markDirty();
+            });
+        }
     }
 
     // showing the nodes as gold block at Y-75 (actual nodes are at ground level), if there is no block in the way.

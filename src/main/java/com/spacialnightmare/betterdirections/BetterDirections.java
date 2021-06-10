@@ -2,6 +2,8 @@ package com.spacialnightmare.betterdirections;
 
 import com.spacialnightmare.betterdirections.events.ModEvents;
 import com.spacialnightmare.betterdirections.item.ModItems;
+import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
+import com.spacialnightmare.betterdirections.nodes.NodeEventHandler;
 import com.spacialnightmare.betterdirections.setup.ClientProxy;
 import com.spacialnightmare.betterdirections.setup.IProxy;
 import com.spacialnightmare.betterdirections.setup.ServerProxy;
@@ -48,6 +50,8 @@ public class BetterDirections
         proxy.init();
 
         loadConfigs();
+
+        CapabilityChunkNodes.register();
          }
 
     private void registerConfigs() {
@@ -68,6 +72,7 @@ public class BetterDirections
         ModItems.register();
 
         // Register the events added by the mod
+        MinecraftForge.EVENT_BUS.register(new NodeEventHandler());
         MinecraftForge.EVENT_BUS.register(new ModEvents());
     }
 }

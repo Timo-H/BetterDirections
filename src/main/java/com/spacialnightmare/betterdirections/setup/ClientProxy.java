@@ -21,11 +21,11 @@ public class ClientProxy implements IProxy{
         keyBindings[1] = new KeyBinding("key.toggle_node_visibility.desc", 66, "key.mod_keybinds.category");
         keyBindings[0] = new KeyBinding("key.set_waypoint.desc", 86, "key.mod_keybinds.category");
         keyBindings[2] = new KeyBinding("key.remove_arrows.desc", 78, "key.mod_keybinds.category");
-        keyBindings[3] = new KeyBinding("key.see_all_waypoins.desc", 77, "key.mod_keybinds.category");
+        keyBindings[3] = new KeyBinding("key.see_all_waypoints.desc", 77, "key.mod_keybinds.category");
 
         // Register the keybindings
-        for (int i = 0; i < keyBindings.length; ++i) {
-            ClientRegistry.registerKeyBinding(keyBindings[i]);
+        for (KeyBinding keyBinding : keyBindings) {
+            ClientRegistry.registerKeyBinding(keyBinding);
         }
     }
 

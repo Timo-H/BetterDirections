@@ -19,7 +19,10 @@ public class ChunkNodesProvider implements ICapabilitySerializable<CompoundNBT> 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return nodesOptional.cast();
+        if (cap == CapabilityChunkNodes.CHUNK_NODES_CAPABILITY) {
+            return nodesOptional.cast();
+        }
+        return LazyOptional.empty();
     }
 
     @Override
@@ -27,6 +30,7 @@ public class ChunkNodesProvider implements ICapabilitySerializable<CompoundNBT> 
         if (CapabilityChunkNodes.CHUNK_NODES_CAPABILITY == null) {
             return new CompoundNBT();
         } else {
+            System.out.println("Serializing");
             return (CompoundNBT) CapabilityChunkNodes.CHUNK_NODES_CAPABILITY.writeNBT(nodes, null);
         }
     }
