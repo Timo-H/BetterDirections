@@ -2,7 +2,7 @@ package com.spacialnightmare.betterdirections.network.message;
 
 
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
-import com.spacialnightmare.betterdirections.nodes.CreateNodes;
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -37,20 +37,33 @@ public class VMessage {
 
             ServerPlayerEntity player = context.getSender();
             World world = player.getEntityWorld();
-            Chunk chunk = world.getChunkAt(player.getPosition());
+
+            ArrayList<Chunk> chunks = new ArrayList<>();
 
             if (message.visible) {
-                BlockPos blockPos = player.getPosition();
-            } else {
-
+                // if toggle is true, then set the chunk that will be in the middle
+                NodeHandler.setMidChunk(world.getChunkAt(player.getPosition()));
             }
-
-            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-                ArrayList<BlockPos> nodes = h.getNodes();
-                for (BlockPos node : nodes) {
-                    CreateNodes.ShowNode(new BlockPos(node.getX(), 75, node.getZ()), world, message.visible);
+            // add chunks in a 11 x 11 around the player into the list
+            if (NodeHandler.getMidChunk() != null) {
+                chunks.add(NodeHandler.getMidChunk());
+                for (int x = NodeHandler.getMidChunk().getPos().getXStart() - 80; x < NodeHandler.getMidChunk()
+                        .getPos().getXStart() + 96; x+=16) {
+                    for (int z = NodeHandler.getMidChunk().getPos().getZStart() - 80; z < NodeHandler.getMidChunk()
+                            .getPos().getZStart() + 96; z+=16) {
+                        chunks.add(world.getChunkAt(new BlockPos(x, 0, z)));
+                    }
                 }
-            });
+            }
+            // for every chunk in the list, make the nodes visible using gold blocks
+            for (Chunk chunk : chunks) {
+                chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
+                    ArrayList<BlockPos> nodes = h.getNodes();
+                    for (BlockPos node : nodes) {
+                        NodeHandler.ShowNode(new BlockPos(node.getX(), 75, node.getZ()), world, message.visible);
+                    }
+                });
+            }
 
         });
         context.setPacketHandled(true);

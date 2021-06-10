@@ -6,6 +6,7 @@ import com.spacialnightmare.betterdirections.network.message.BMessage;
 import com.spacialnightmare.betterdirections.network.message.MMessage;
 import com.spacialnightmare.betterdirections.network.message.VMessage;
 import com.spacialnightmare.betterdirections.item.ModItems;
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.util.KeyBindsInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,8 +20,6 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = BetterDirections.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModEvents {
-
-    public static Boolean visibility = true;
 
     @SubscribeEvent
     public static void onKeyPress(InputEvent.KeyInputEvent event) {
@@ -42,8 +41,8 @@ public class ModEvents {
             // if V is pressed
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
             // send a packet to the server containing a boolean to set the nodes Visible/Invisible
-            ModNetwork.CHANNEL.sendToServer(new VMessage(visibility));
-            visibility = !visibility;
+            ModNetwork.CHANNEL.sendToServer(new VMessage(NodeHandler.getNodeVisibility()));
+            NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
 
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
             // if B is pressed

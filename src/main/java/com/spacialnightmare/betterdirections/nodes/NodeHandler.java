@@ -10,7 +10,28 @@ import net.minecraft.world.gen.Heightmap;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
-public class CreateNodes {
+public class NodeHandler {
+
+    public static Boolean NodeVisibility = true;
+
+    public static Chunk midChunk;
+
+    public static Boolean getNodeVisibility() {
+        return NodeVisibility;
+    }
+
+    public static Chunk getMidChunk() {
+        return midChunk;
+    }
+
+    public static void setNodeVisibility(Boolean nodeVisibility) {
+        NodeVisibility = nodeVisibility;
+    }
+
+    public static void setMidChunk(Chunk midChunk) {
+        NodeHandler.midChunk = midChunk;
+    }
+
     // check if there are already nodes created in the chunk, and if so, checks if the amount of nodes is the same as
     // specified in the config
     public static boolean CheckExistingNodes(@Nullable ArrayList<BlockPos> exNodes) {
@@ -49,6 +70,10 @@ public class CreateNodes {
                 nodes.add(node);
             }
         }
+        saveNodes(chunk, world, nodes);
+    }
+
+    public static void saveNodes(Chunk chunk, World world, ArrayList<BlockPos> nodes) {
         // saving the nodes to the chunk
         if (!world.isRemote) {
             chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(n -> {

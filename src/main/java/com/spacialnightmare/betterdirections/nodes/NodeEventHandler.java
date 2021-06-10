@@ -36,8 +36,8 @@ public class NodeEventHandler {
             Chunk finalChunk = chunk;
             World finalWorld = world;
             chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-                if (CreateNodes.CheckExistingNodes(h.getNodes())) {
-                    CreateNodes.CreateChunkNodes(finalChunk, finalWorld);
+                if (NodeHandler.CheckExistingNodes(h.getNodes())) {
+                    NodeHandler.CreateChunkNodes(finalChunk, finalWorld);
                 }
             });
         }
