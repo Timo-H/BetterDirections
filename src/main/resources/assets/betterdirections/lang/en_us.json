@@ -1,5 +1,12 @@
 {
   "item.betterdirections.wayward_compass": "Wayward Compass",
 
-  "message.toggle_nodes": "Toggle Nodes Visibility"
+  "message.toggle_nodes": "Toggle Nodes Visibility",
+
+  "key.category.betterdirections": "Better Directions",
+
+  "key.betterdirections.show_nodes": "Show Nodes",
+  "key.betterdirections.set_waypoint": "Set Waypoint",
+  "key.betterdirections.show_path": "Show Path",
+  "key.betterdirections.hide_path": "Hide Path"
 }

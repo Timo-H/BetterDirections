@@ -20,15 +20,15 @@ public class NMessage {
         this.key = key;
     }
 
-    public static void encode(MMessage message, PacketBuffer buffer) {
+    public static void encode(NMessage message, PacketBuffer buffer) {
         buffer.writeInt(message.key);
     }
 
-    public static MMessage decode(PacketBuffer buffer) {
-        return new MMessage(buffer.readInt());
+    public static NMessage decode(PacketBuffer buffer) {
+        return new NMessage(buffer.readInt());
     }
 
-    public static void handle(MMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(NMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
 
