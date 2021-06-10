@@ -1,7 +1,6 @@
 package com.spacialnightmare.betterdirections.nodes;
 
 import com.spacialnightmare.betterdirections.util.Config;
-import com.sun.media.jfxmedia.logging.Logger;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -19,10 +18,10 @@ public class CapabilityChunkNodes {
     public static Capability<IChunkNodes> CHUNK_NODES_CAPABILITY = null;
 
     public static void register() {
-        CapabilityManager.INSTANCE.register(IChunkNodes.class, new Storage(), DefaultChunkNodes::new);
+        CapabilityManager.INSTANCE.register(IChunkNodes.class, new ChunkNodeStorage(), DefaultChunkNodes::new);
     }
 
-    public static class Storage implements Capability.IStorage<IChunkNodes> {
+    public static class ChunkNodeStorage implements Capability.IStorage<IChunkNodes> {
 
         @Nullable
         @Override

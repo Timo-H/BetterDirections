@@ -11,17 +11,17 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class BMessage {
-    public BlockPos chunk;
+    public BlockPos waypoint;
 
     public BMessage() {
     }
 
-    public BMessage(BlockPos chunk) {
-        this.chunk = chunk;
+    public BMessage(BlockPos waypoint) {
+        this.waypoint = waypoint;
     }
 
     public static void encode(BMessage message, PacketBuffer buffer) {
-        buffer.writeBlockPos(message.chunk);
+        buffer.writeBlockPos(message.waypoint);
     }
 
     public static BMessage decode(PacketBuffer buffer) {
@@ -32,13 +32,7 @@ public class BMessage {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
 
-            ServerPlayerEntity player = context.getSender();
-            World world = player.getEntityWorld();
-            Chunk chunk = world.getChunkAt(message.chunk);
 
-            chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
-                System.out.println(h.getNodes());
-            });
 
         });
         context.setPacketHandled(true);

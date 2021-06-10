@@ -10,6 +10,8 @@ import com.spacialnightmare.betterdirections.setup.IProxy;
 import com.spacialnightmare.betterdirections.setup.ServerProxy;
 import com.spacialnightmare.betterdirections.util.Config;
 import com.spacialnightmare.betterdirections.util.Registration;
+import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
+import com.spacialnightmare.betterdirections.waypoints.WaypointEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -38,6 +40,7 @@ public class BetterDirections
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
+        // Register Mod additions
         registerModAdditions();
 
         // Register ourselves for server and other game events we are interested in
@@ -52,8 +55,11 @@ public class BetterDirections
 
         loadConfigs();
 
+        // Initiate the network for the mod
         ModNetwork.init();
 
+        // Register the Capabilities
+        CapabilityWaypoints.register();
         CapabilityChunkNodes.register();
          }
 
@@ -75,6 +81,7 @@ public class BetterDirections
         ModItems.register();
 
         // Register the events added by the mod
+        MinecraftForge.EVENT_BUS.register(new WaypointEventHandler());
         MinecraftForge.EVENT_BUS.register(new NodeEventHandler());
         MinecraftForge.EVENT_BUS.register(new ModEvents());
     }
