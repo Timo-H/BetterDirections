@@ -1,6 +1,7 @@
 package com.spacialnightmare.betterdirections.events;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
+import com.spacialnightmare.betterdirections.gui.screen.SetWaypointScreen;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.BMessage;
 import com.spacialnightmare.betterdirections.network.message.MMessage;
@@ -10,13 +11,16 @@ import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.util.KeyBindsInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 @Mod.EventBusSubscriber(modid = BetterDirections.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModEvents {
@@ -37,6 +41,7 @@ public class ModEvents {
 
     private static void onInput(Minecraft mc, int key, int action) {
         PlayerEntity player = mc.player;
+        World world = mc.world;
         if (mc.currentScreen == null && KeyBindsInit.showNodes.isPressed()) {
             // if V is pressed
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
@@ -46,8 +51,9 @@ public class ModEvents {
 
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
             // if B is pressed
-            ModNetwork.CHANNEL.sendToServer(new BMessage(new BlockPos(12800, 65, 0)));
-
+            if (world != null && player != null && world.isRemote) {
+                mc.displayGuiScreen(new SetWaypointScreen());
+            }
         } else if (mc.currentScreen == null && KeyBindsInit.showPathing.isPressed()) {
             // if N is pressed
 

@@ -14,6 +14,7 @@ public class ClientProxy implements IProxy{
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
+
         KeyBindsInit.register(event);
     }
 

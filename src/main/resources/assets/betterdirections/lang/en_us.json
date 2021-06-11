@@ -8,5 +8,10 @@
   "key.betterdirections.show_nodes": "Show Nodes",
   "key.betterdirections.set_waypoint": "Set Waypoint",
   "key.betterdirections.show_path": "Show Path",
-  "key.betterdirections.hide_path": "Hide Path"
+  "key.betterdirections.hide_path": "Hide Path",
+
+
+  "gui.betterdirections.set_waypoint_title": "Set Waypoint",
+  "gui.betterdirections.set_waypoint": "Set Waypoint",
+  "gui.betterdirections.exit": "Exit"
 }

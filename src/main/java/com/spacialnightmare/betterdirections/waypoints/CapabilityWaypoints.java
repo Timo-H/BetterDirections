@@ -27,10 +27,12 @@ public class CapabilityWaypoints {
         @Override
         public INBT writeNBT(Capability<IWaypoints> capability, IWaypoints instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
-            for (int i = 0; i < instance.getWaypoints().size(); i++) {
-                int[] waypoint = {instance.getWaypoints().get(i).getX(), instance.getWaypoints().get(i).getY(),
-                        instance.getWaypoints().get(i).getZ()};
-                tag.putIntArray(instance.getWaypointsNames().get(i), waypoint);
+            if (instance.getWaypoints() != null && instance.getWaypointsNames() != null) {
+                for (int i = 0; i < instance.getWaypoints().size(); i++) {
+                    int[] waypoint = {instance.getWaypoints().get(i).getX(), instance.getWaypoints().get(i).getY(),
+                            instance.getWaypoints().get(i).getZ()};
+                    tag.putIntArray(instance.getWaypointsNames().get(i), waypoint);
+                }
             }
             return tag;
         }
@@ -38,13 +40,18 @@ public class CapabilityWaypoints {
         @Override
         public void readNBT(Capability<IWaypoints> capability, IWaypoints instance, Direction side, INBT nbt) {
             ArrayList<BlockPos> waypoints = new ArrayList<>();
-            for (int i = 0; i < Config.NODES_PER_CHUNK.get(); i++) {
+            if (instance.getWaypoints() == null) {
+                instance.setWaypoints(instance.getWaypoints());
+            } else {
+                for (int i = 0; i < instance.getWaypoints().size(); i++) {
 
-                int[] waypointsArray = ((CompoundNBT) nbt).getIntArray(instance.getWaypointsNames().get(i));
-                BlockPos waypoint = new BlockPos(waypointsArray[0], waypointsArray[1], waypointsArray[2]);
-                waypoints.add(waypoint);
+                    int[] waypointsArray = ((CompoundNBT) nbt).getIntArray(instance.getWaypointsNames().get(i));
+                    BlockPos waypoint = new BlockPos(waypointsArray[0], waypointsArray[1], waypointsArray[2]);
+                    waypoints.add(waypoint);
+                }
+                instance.setWaypoints(waypoints);
             }
-            instance.setWaypoints(waypoints);
+            instance.setWaypointsNames(instance.getWaypointsNames());
         }
     }
 }

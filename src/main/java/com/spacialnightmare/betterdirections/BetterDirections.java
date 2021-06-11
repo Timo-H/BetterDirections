@@ -1,6 +1,7 @@
 package com.spacialnightmare.betterdirections;
 
 import com.spacialnightmare.betterdirections.events.ModEvents;
+import com.spacialnightmare.betterdirections.gui.screen.SetWaypointScreen;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
@@ -14,9 +15,11 @@ import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -37,7 +40,7 @@ public class BetterDirections
     public BetterDirections() {
         proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
-        // Register the setup method for modloading
+        // Register the setup method for modloading;
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
         // Register Mod additions
