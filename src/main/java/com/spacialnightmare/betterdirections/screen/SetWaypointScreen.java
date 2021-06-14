@@ -1,12 +1,9 @@
-package com.spacialnightmare.betterdirections.gui.screen;
+package com.spacialnightmare.betterdirections.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
-import com.spacialnightmare.betterdirections.network.message.BMessage;
-import com.spacialnightmare.betterdirections.network.message.VMessage;
-import com.spacialnightmare.betterdirections.nodes.NodeHandler;
-import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
+import com.spacialnightmare.betterdirections.network.message.SetWaypointMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -44,8 +41,7 @@ public final class SetWaypointScreen extends Screen {
                     new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".set_waypoint"),
                     (ButtonAction) -> {
                         if (!textBox.getText().isEmpty()) {
-                            System.out.println(textBox.getText());
-                            ModNetwork.CHANNEL.sendToServer(new BMessage(textBox.getText()));
+                            ModNetwork.CHANNEL.sendToServer(new SetWaypointMessage(textBox.getText()));
                             this.closeScreen();
                         }
                     }));

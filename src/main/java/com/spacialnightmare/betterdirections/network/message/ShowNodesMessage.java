@@ -1,6 +1,5 @@
 package com.spacialnightmare.betterdirections.network.message;
 
-
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -13,25 +12,25 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-public class VMessage {
+public class ShowNodesMessage {
     public Boolean visible;
 
-    public VMessage() {
+    public ShowNodesMessage() {
     }
 
-    public VMessage(boolean visible) {
+    public ShowNodesMessage(boolean visible) {
         this.visible = visible;
     }
 
-    public static void encode(VMessage message, PacketBuffer buffer) {
+    public static void encode(ShowNodesMessage message, PacketBuffer buffer) {
         buffer.writeBoolean(message.visible);
     }
 
-    public static VMessage decode(PacketBuffer buffer) {
-        return new VMessage(buffer.readBoolean());
+    public static ShowNodesMessage decode(PacketBuffer buffer) {
+        return new ShowNodesMessage(buffer.readBoolean());
     }
 
-    public static void handle(VMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(ShowNodesMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
 

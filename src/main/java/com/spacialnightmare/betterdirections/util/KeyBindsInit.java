@@ -13,19 +13,19 @@ import java.awt.event.KeyEvent;
 public class KeyBindsInit {
     public static KeyBinding showNodes;
     public static KeyBinding setWaypoint;
-    public static KeyBinding showPathing;
-    public static KeyBinding hidePathing;
+    public static KeyBinding seeWaypoints;
+    public static KeyBinding togglePathing;
 
     public static void register(final FMLClientSetupEvent event) {
         showNodes = create("show_nodes", KeyEvent.VK_V);
         setWaypoint = create("set_waypoint", KeyEvent.VK_B);
-        showPathing = create("show_path", KeyEvent.VK_N);
-        hidePathing = create("hide_path", KeyEvent.VK_M);
+        seeWaypoints = create("see_waypoints", KeyEvent.VK_N);
+        togglePathing = create("toggle_path", KeyEvent.VK_M);
 
         ClientRegistry.registerKeyBinding(showNodes);
         ClientRegistry.registerKeyBinding(setWaypoint);
-        ClientRegistry.registerKeyBinding(showPathing);
-        ClientRegistry.registerKeyBinding(hidePathing);
+        ClientRegistry.registerKeyBinding(seeWaypoints);
+        ClientRegistry.registerKeyBinding(togglePathing);
     }
 
     private static KeyBinding create(String name, int key) {

@@ -8,6 +8,9 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 
 public class WaypointHandler {
+    private static boolean isPathing;
+    private static String isPathingTo;
+
     public static void addWaypoint(ServerPlayerEntity player, String waypointName) {
         player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(h -> {
 
@@ -50,5 +53,21 @@ public class WaypointHandler {
             world.setBlockState(waypoints.get(waypointsNames.indexOf(waypoint)), Blocks.GOLD_BLOCK.getDefaultState());
         });
 
+    }
+
+    public static boolean isPathing() {
+        return isPathing;
+    }
+
+    public static void setPathing(boolean pathing) {
+        isPathing = pathing;
+    }
+
+    public static String getIsPathingTo() {
+        return isPathingTo;
+    }
+
+    public static void setIsPathingTo(String isPathingTo) {
+        WaypointHandler.isPathingTo = isPathingTo;
     }
 }

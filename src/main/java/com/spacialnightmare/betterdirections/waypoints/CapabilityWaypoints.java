@@ -26,9 +26,12 @@ public class CapabilityWaypoints {
         @Nullable
         @Override
         public INBT writeNBT(Capability<IWaypoints> capability, IWaypoints instance, Direction side) {
+
             CompoundNBT tag = new CompoundNBT();
             if (instance.getWaypoints() != null && instance.getWaypointsNames() != null) {
+
                 for (int i = 0; i < instance.getWaypoints().size(); i++) {
+
                     int[] waypoint = {instance.getWaypoints().get(i).getX(), instance.getWaypoints().get(i).getY(),
                             instance.getWaypoints().get(i).getZ()};
                     tag.putIntArray(instance.getWaypointsNames().get(i), waypoint);
@@ -39,10 +42,14 @@ public class CapabilityWaypoints {
 
         @Override
         public void readNBT(Capability<IWaypoints> capability, IWaypoints instance, Direction side, INBT nbt) {
-            ArrayList<BlockPos> waypoints = new ArrayList<>();
+
             if (instance.getWaypoints() == null) {
                 instance.setWaypoints(instance.getWaypoints());
+
             } else {
+
+                ArrayList<BlockPos> waypoints = new ArrayList<>();
+
                 for (int i = 0; i < instance.getWaypoints().size(); i++) {
 
                     int[] waypointsArray = ((CompoundNBT) nbt).getIntArray(instance.getWaypointsNames().get(i));

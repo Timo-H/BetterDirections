@@ -1,18 +1,17 @@
 package com.spacialnightmare.betterdirections.events;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
-import com.spacialnightmare.betterdirections.gui.screen.SetWaypointScreen;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
-import com.spacialnightmare.betterdirections.network.message.BMessage;
+import com.spacialnightmare.betterdirections.network.message.AskWaypointMessage;
 import com.spacialnightmare.betterdirections.network.message.MMessage;
-import com.spacialnightmare.betterdirections.network.message.VMessage;
+import com.spacialnightmare.betterdirections.network.message.ShowNodesMessage;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
+import com.spacialnightmare.betterdirections.screen.SetWaypointScreen;
+import com.spacialnightmare.betterdirections.screen.WaypointScreen;
 import com.spacialnightmare.betterdirections.util.KeyBindsInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,7 +19,6 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 @Mod.EventBusSubscriber(modid = BetterDirections.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ModEvents {
@@ -46,7 +44,7 @@ public class ModEvents {
             // if V is pressed
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
             // send a packet to the server containing a boolean to set the nodes Visible/Invisible
-            ModNetwork.CHANNEL.sendToServer(new VMessage(NodeHandler.getNodeVisibility()));
+            ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
             NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
 
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
@@ -54,10 +52,13 @@ public class ModEvents {
             if (world != null && player != null && world.isRemote) {
                 mc.displayGuiScreen(new SetWaypointScreen());
             }
-        } else if (mc.currentScreen == null && KeyBindsInit.showPathing.isPressed()) {
+        } else if (mc.currentScreen == null && KeyBindsInit.seeWaypoints.isPressed()) {
             // if N is pressed
+            if (world != null && player != null && world.isRemote) {
+                mc.displayGuiScreen(new WaypointScreen());
+            }
 
-        } else if (mc.currentScreen == null && KeyBindsInit.hidePathing.isPressed()) {
+        } else if (mc.currentScreen == null && KeyBindsInit.togglePathing.isPressed()) {
             // if M is pressed
             ModNetwork.CHANNEL.sendToServer(new MMessage(key));
         }

@@ -7,11 +7,12 @@
 
   "key.betterdirections.show_nodes": "Show Nodes",
   "key.betterdirections.set_waypoint": "Set Waypoint",
-  "key.betterdirections.show_path": "Show Path",
-  "key.betterdirections.hide_path": "Hide Path",
-
+  "key.betterdirections.see_waypoints": "See Waypoints",
+  "key.betterdirections.toggle_path": "Toggle Path",
 
   "gui.betterdirections.set_waypoint_title": "Set Waypoint",
   "gui.betterdirections.set_waypoint": "Set Waypoint",
+  "gui.betterdirections.waypoint_title": "Waypoints",
+  "gui.betterdirections.waypoint": "Waypoints",
   "gui.betterdirections.exit": "Exit"
 }
