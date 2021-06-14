@@ -10,6 +10,7 @@ import net.minecraft.world.gen.Heightmap;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
+// this class has all the methods used by the Node Capability
 public class NodeHandler {
 
     public static Boolean NodeVisibility = true;
@@ -44,7 +45,7 @@ public class NodeHandler {
     // Create the nodes for the given chunk, the amount of nodes created depends on the NODES_PER_CHUNK Integer in the config
     public static void CreateChunkNodes(Chunk chunk, World world) {
         // Determine distance between nodes depending on the NODES_PER_CHUNK
-        int distanceBetweenNodes = 0;
+        int distanceBetweenNodes;
         if (Config.NODES_PER_CHUNK.get() == 256) {
             distanceBetweenNodes = 1;
         } else if (Config.NODES_PER_CHUNK.get() == 64) {
@@ -60,7 +61,7 @@ public class NodeHandler {
         for (int i = 0; i < 16; i += distanceBetweenNodes) {
             // creating nodes
             for (int j = 0; j < 16; j += distanceBetweenNodes) {
-
+                // Storing the coords in a BlockPos variable
                 int x = chunk.getPos().getXStart() + i;
                 int y = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, chunk.getPos().getXStart() + i,
                         chunk.getPos().getZStart() + j);
@@ -70,6 +71,7 @@ public class NodeHandler {
                 nodes.add(node);
             }
         }
+        // save the nodes to the chunk
         saveNodes(chunk, world, nodes);
     }
 
@@ -78,6 +80,7 @@ public class NodeHandler {
         if (!world.isRemote) {
             chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(n -> {
                 n.setNodes(nodes);
+                // mark dirty so the data gets written to disk
                 chunk.markDirty();
             });
         }
@@ -86,11 +89,15 @@ public class NodeHandler {
     // showing the nodes as gold block at Y-75 (actual nodes are at ground level), if there is no block in the way.
     public static void ShowNode(BlockPos pos, World world, Boolean visible) {
         if (visible) {
+            // replace block with Gold block at the given BlockPos, but only if the block is air
             if (world.isAirBlock(pos)) {
                 world.setBlockState(pos, Blocks.GOLD_BLOCK.getDefaultState());
             }
         } else {
-            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+            // replace the gold block back with air again
+            if (world.getBlockState(pos) == Blocks.GOLD_BLOCK.getDefaultState()) {
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+            }
         }
     }
 }

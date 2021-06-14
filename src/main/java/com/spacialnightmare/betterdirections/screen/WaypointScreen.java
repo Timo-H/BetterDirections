@@ -2,6 +2,8 @@ package com.spacialnightmare.betterdirections.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
+import com.spacialnightmare.betterdirections.network.ModNetwork;
+import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.client.Minecraft;
@@ -9,7 +11,9 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
@@ -69,12 +73,18 @@ public class WaypointScreen extends Screen {
                     this.waypointsTextbox.get(i).setText(h.getWaypointsNames().get(i));
                     this.waypointsTextbox.get(i).setDisabledTextColour(0xFFFFFF);
 
-                    // create a button for the waypoint
+                    // create a button to start/stop the pathing to the waypoint
                     PathingButton pathing = new PathingButton((this.width/2) + BUTTON_HEIGHT*4, centerY + BUTTON_OFFSET +
                             (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> {
                     }, i);
                     // add the button to the button List
                     addButton(pathing);
+                    // create a button to delete a waypoint
+                    DeleteButton delete = new DeleteButton((this.width/2) + BUTTON_HEIGHT*2, centerY + BUTTON_OFFSET +
+                            (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> {
+                    }, i);
+                    // add the button to the button List
+                    addButton(delete);
                 }
             }
         });
@@ -88,7 +98,6 @@ public class WaypointScreen extends Screen {
         this.renderBackground(matrixStack);
         // bind the texture to the Gui
         Minecraft.getInstance().getTextureManager().bindTexture(texture);
-
         // gets the center values for the Gui, so it appears in the middle of the screen
         int centerX = (this.width / 2) -  GUI_WIDTH / 2;
         int centerY = (this.height/2) - GUI_HEIGHT / 2;
@@ -130,12 +139,21 @@ public class WaypointScreen extends Screen {
         return false;
     }
 
+    @Override
+    public void tick() {
+        Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(h -> {
+            if (h.getWaypoints().size() != this.waypointsTextbox.size()) {
+                this.init();
+            }
+        });
+    }
+
     static class PathingButton extends Button {
-
+        // textureY is will need to be changed depending on what texture is used
         public int textureY;
-
+        // waypoint index value
         public int waypoint;
-
+        // ResourceLocation for the texture
         ResourceLocation texture = new ResourceLocation("textures/gui/book.png");
 
         public PathingButton(int x, int y, IPressable pressedAction, int waypoint) {
@@ -143,6 +161,7 @@ public class WaypointScreen extends Screen {
             this.waypoint = waypoint;
         }
 
+        // render all the parts of the button
         @Override
         public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 
@@ -172,6 +191,7 @@ public class WaypointScreen extends Screen {
             }
         }
 
+        // get TextureY based on other values
         public int getTextureY() {
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
                     .ifPresent(capability -> {
@@ -206,6 +226,44 @@ public class WaypointScreen extends Screen {
                             WaypointHandler.setIsPathingTo("");
                         }
                 });
+        }
+    }
+    // Create a delete button for the waypoints
+    static class DeleteButton extends Button {
+        // index value for waypoint
+        public int waypoint;
+        // resourceLocation for the texture
+        ResourceLocation texture = new ResourceLocation("textures/gui/book.png");
+
+        public DeleteButton(int x, int y, IPressable pressedAction, int waypoint) {
+            super(x, y, 8, 9, new TranslationTextComponent(""), pressedAction);
+            this.waypoint = waypoint;
+        }
+        // render all the parts of the button
+        @Override
+        public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+
+            // texture values for the button
+            int textureX = 36;
+            int textureY = 194;
+            int textureWidth = 8;
+            int textureHeight = 9;
+
+            if (visible) {
+                // bind the texture to the button
+                Minecraft.getInstance().getTextureManager().bindTexture(texture);
+            }
+            // position the button with values
+            this.blit(matrixStack, x, y, textureX, textureY, textureWidth, textureHeight);
+        }
+        // action taken when pressed
+        @Override
+        public void onPress() {
+            // send a packet to the server telling it to remove the waypoint, using its index value
+            Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
+                ModNetwork.CHANNEL.sendToServer(new RemoveWaypointMesage(capability.getWaypointsNames().get(waypoint)));
+
+            });
         }
     }
 }

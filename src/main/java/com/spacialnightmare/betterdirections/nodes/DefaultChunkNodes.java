@@ -4,6 +4,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 
+// set the default values and methods for the capability
 public class DefaultChunkNodes implements IChunkNodes {
 
     private ArrayList<BlockPos> nodes;

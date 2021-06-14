@@ -13,18 +13,19 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class CapabilityChunkNodes {
-
+    // Inject the Capability IChunkNodes into this class
     @CapabilityInject(IChunkNodes.class)
     public static Capability<IChunkNodes> CHUNK_NODES_CAPABILITY = null;
-
+    // Register this Capability class
     public static void register() {
         CapabilityManager.INSTANCE.register(IChunkNodes.class, new ChunkNodeStorage(), DefaultChunkNodes::new);
     }
-
+    // This class handles the data storage (writing and reading)
     public static class ChunkNodeStorage implements Capability.IStorage<IChunkNodes> {
 
         @Nullable
         @Override
+        // write the data as NBT data and return it
         public INBT writeNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
 
@@ -37,6 +38,7 @@ public class CapabilityChunkNodes {
         }
 
         @Override
+        // read the NBT data when an object is loaded, and sets the data for it
         public void readNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side, INBT nbt) {
             ArrayList<BlockPos> nodes = new ArrayList<>();
             for (int i = 0; i < Config.NODES_PER_CHUNK.get(); i++) {

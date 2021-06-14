@@ -13,11 +13,12 @@ public class ChunkNodesProvider implements ICapabilitySerializable<CompoundNBT> 
 
     private final DefaultChunkNodes nodes = new DefaultChunkNodes();
     private final LazyOptional<IChunkNodes> nodesOptional = LazyOptional.of(() -> nodes);
-
+    // invalidate the LazyOptional
     public void invalidate() {nodesOptional.invalidate();}
 
     @Nonnull
     @Override
+    // return the LazyOptional if the capability thats being called is this one, otherwise return an empty LazyOptional
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityChunkNodes.CHUNK_NODES_CAPABILITY) {
             return nodesOptional.cast();
@@ -26,6 +27,7 @@ public class ChunkNodesProvider implements ICapabilitySerializable<CompoundNBT> 
     }
 
     @Override
+    // Serialize the NBT data
     public CompoundNBT serializeNBT() {
         if (CapabilityChunkNodes.CHUNK_NODES_CAPABILITY == null) {
             return new CompoundNBT();
@@ -35,6 +37,7 @@ public class ChunkNodesProvider implements ICapabilitySerializable<CompoundNBT> 
     }
 
     @Override
+    // Deserialize the NBT data
     public void deserializeNBT(CompoundNBT nbt) {
         if (CapabilityChunkNodes.CHUNK_NODES_CAPABILITY != null) {
             CapabilityChunkNodes.CHUNK_NODES_CAPABILITY.readNBT(nodes, null, nbt);

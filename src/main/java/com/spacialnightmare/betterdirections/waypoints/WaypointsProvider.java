@@ -14,12 +14,13 @@ public class WaypointsProvider implements ICapabilitySerializable<CompoundNBT> {
 
     private final DefaultWaypoints waypoints = new DefaultWaypoints();
     private final LazyOptional<IWaypoints> waypointsOptional = LazyOptional.of(() -> waypoints);
-
+    // invalidate the LazyOptional
     public void invalidate() { waypointsOptional.invalidate(); }
 
 
     @Nonnull
     @Override
+    // return the LazyOptional if the capability thats being called is this one, otherwise return an empty LazyOptional
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityWaypoints.WAYPOINTS_CAPABILITY) {
             return waypointsOptional.cast();
@@ -28,6 +29,7 @@ public class WaypointsProvider implements ICapabilitySerializable<CompoundNBT> {
     }
 
     @Override
+    // Serialize the NBT data
     public CompoundNBT serializeNBT() {
         if (CapabilityWaypoints.WAYPOINTS_CAPABILITY == null) {
             return new CompoundNBT();
@@ -37,6 +39,7 @@ public class WaypointsProvider implements ICapabilitySerializable<CompoundNBT> {
     }
 
     @Override
+    // Deserialize the NBT data
     public void deserializeNBT(CompoundNBT nbt) {
         if (CapabilityWaypoints.WAYPOINTS_CAPABILITY != null) {
             CapabilityWaypoints.WAYPOINTS_CAPABILITY.readNBT(waypoints, null, nbt);

@@ -9,6 +9,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import java.awt.event.KeyEvent;
 
+// Create keybindings that are changeable in the Minecraft Controls panel
 @OnlyIn(Dist.CLIENT)
 public class KeyBindsInit {
     public static KeyBinding showNodes;
@@ -16,6 +17,7 @@ public class KeyBindsInit {
     public static KeyBinding seeWaypoints;
     public static KeyBinding togglePathing;
 
+    // Register all the keybinds
     public static void register(final FMLClientSetupEvent event) {
         showNodes = create("show_nodes", KeyEvent.VK_V);
         setWaypoint = create("set_waypoint", KeyEvent.VK_B);
@@ -28,6 +30,7 @@ public class KeyBindsInit {
         ClientRegistry.registerKeyBinding(togglePathing);
     }
 
+    // Create all the keybindings
     private static KeyBinding create(String name, int key) {
         return new KeyBinding("key." + BetterDirections.MOD_ID + "." + name, key, "key.category." +
                 BetterDirections.MOD_ID);

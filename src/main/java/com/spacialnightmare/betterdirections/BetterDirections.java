@@ -62,12 +62,12 @@ public class BetterDirections
         CapabilityWaypoints.register();
         CapabilityChunkNodes.register();
          }
-
+    // Register the Client and Server configs
     private void registerConfigs() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
     }
-
+    // Load the Client and Server configs
     private void loadConfigs() {
         Config.loadConfigFile(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve("betterdirections-client.toml").toString());
         Config.loadConfigFile(Config.SERVER_CONFIG, FMLPaths.CONFIGDIR.get().resolve("betterdirections-server.toml").toString());

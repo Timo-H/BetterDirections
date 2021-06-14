@@ -6,6 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.io.File;
 
+// Configuration class
 public class Config {
 
     public static ForgeConfigSpec SERVER_CONFIG;
@@ -23,7 +24,7 @@ public class Config {
         SERVER_CONFIG = SERVER_BUILDER.build();
         CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
-
+    // define a config value (description, etc)
     private static void nodesPerChunk(ForgeConfigSpec.Builder SERVER_BUILDER,
                                       ForgeConfigSpec.Builder CLIENT_BUILDER) {
         NODES_PER_CHUNK = CLIENT_BUILDER.comment("How many nodes get generated per chunk, " +
@@ -31,7 +32,7 @@ public class Config {
                 "Anything else will not work!")
                 .defineInRange("nodes_per_chunk", 16, 16, 256);
     }
-
+    // load the config file
     public static void loadConfigFile(ForgeConfigSpec config, String path) {
         final CommentedFileConfig file = CommentedFileConfig.builder(new File(path))
                 .sync().autosave().writingMode(WritingMode.REPLACE).build();

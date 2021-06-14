@@ -14,7 +14,7 @@ public class ClientProxy implements IProxy{
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-
+        // register the keybinds
         KeyBindsInit.register(event);
     }
 

@@ -21,29 +21,29 @@ public class ShowNodesMessage {
     public ShowNodesMessage(boolean visible) {
         this.visible = visible;
     }
-
+    // Encoder for this packet
     public static void encode(ShowNodesMessage message, PacketBuffer buffer) {
         buffer.writeBoolean(message.visible);
     }
-
+    // Decoder for this packet
     public static ShowNodesMessage decode(PacketBuffer buffer) {
         return new ShowNodesMessage(buffer.readBoolean());
     }
-
+    // Action performed by this packet
     public static void handle(ShowNodesMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
 
             ServerPlayerEntity player = context.getSender();
             World world = player.getEntityWorld();
-
+            // make an arraylist for chunks
             ArrayList<Chunk> chunks = new ArrayList<>();
 
             if (message.visible) {
                 // if toggle is true, then set the chunk that will be in the middle
                 NodeHandler.setMidChunk(world.getChunkAt(player.getPosition()));
             }
-            // add chunks in a 11 x 11 around the player into the list
+            // add chunks in a 11 x 11 around the player into the arraylist
             if (NodeHandler.getMidChunk() != null) {
                 chunks.add(NodeHandler.getMidChunk());
                 for (int x = NodeHandler.getMidChunk().getPos().getXStart() - 80; x < NodeHandler.getMidChunk()
@@ -54,11 +54,13 @@ public class ShowNodesMessage {
                     }
                 }
             }
-            // for every chunk in the list, make the nodes visible using gold blocks
+            // for every chunk in the list
             for (Chunk chunk : chunks) {
                 chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
                     ArrayList<BlockPos> nodes = h.getNodes();
+                    // for every node in a chunk
                     for (BlockPos node : nodes) {
+                        // show the nodes using gold blocks
                         NodeHandler.ShowNode(new BlockPos(node.getX(), 75, node.getZ()), world, message.visible);
                     }
                 });
