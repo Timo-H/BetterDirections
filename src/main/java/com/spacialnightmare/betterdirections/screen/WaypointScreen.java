@@ -8,23 +8,16 @@ import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
-
 
 public class WaypointScreen extends Screen {
 
     // A resource Location for the texture
     ResourceLocation texture = new ResourceLocation("textures/gui/book.png");
-
-    ArrayList<TextFieldWidget> waypointsTextbox = new ArrayList<>();
 
     // Gui width based on the texture
     private static final int GUI_WIDTH = 146;
@@ -57,38 +50,23 @@ public class WaypointScreen extends Screen {
                     this.closeScreen();
                 }));
 
-        // get the player Waypoints Capability
-        this.minecraft.player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(h -> {
-            // check if the player has any waypoints
-            if (h.getWaypoints() != null && h.getWaypoints().size() > 0) {
-                // for every waypoint
-                for (int i = 0; i < h.getWaypoints().size(); i++) {
-                    // create a textBox for the waypoint
-                    this.waypointsTextbox.add(new TextFieldWidget(minecraft.fontRenderer, (this.width/2) -
-                            BUTTON_HEIGHT*3 + BUTTON_HEIGHT/4, centerY + BUTTON_OFFSET +
-                            (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), BUTTON_WIDTH-BUTTON_HEIGHT/2, BUTTON_HEIGHT,
-                            new TranslationTextComponent("text." + BetterDirections.MOD_ID + "." +
-                                    h.getWaypointsNames().get(i))));
-                    // set the textBox name and color
-                    this.waypointsTextbox.get(i).setText(h.getWaypointsNames().get(i));
-                    this.waypointsTextbox.get(i).setDisabledTextColour(0xFFFFFF);
-
-                    // create a button to start/stop the pathing to the waypoint
-                    PathingButton pathing = new PathingButton((this.width/2) + BUTTON_HEIGHT*4, centerY + BUTTON_OFFSET +
-                            (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> {
-                    }, i);
-                    // add the button to the button List
-                    addButton(pathing);
-                    // create a button to delete a waypoint
-                    DeleteButton delete = new DeleteButton((this.width/2) + BUTTON_HEIGHT*2, centerY + BUTTON_OFFSET +
-                            (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> {
-                    }, i);
-                    // add the button to the button List
-                    addButton(delete);
+        // check if the player has any waypoints
+        if (!this.getWaypointsNames().isEmpty()) {
+            // for every waypoint
+            for (int i = 0; i < this.getWaypointsNames().size(); i++) {
+                // create a button to start/stop the pathing to the waypoint
+                PathingButton pathing = new PathingButton((this.width/2) + BUTTON_HEIGHT*4, centerY + BUTTON_OFFSET +
+                        (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> { }, i);
+                // add the button to the button List
+                addButton(pathing);
+                // create a button to delete a waypoint
+                DeleteButton delete = new DeleteButton((this.width/2) + BUTTON_HEIGHT*2, centerY + BUTTON_OFFSET +
+                        (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), (ButtonAction) -> {
+                        }, i);
+                // add the button to the button List
+                addButton(delete);
                 }
             }
-        });
-
     }
 
     // renders all the objects of the gui
@@ -110,18 +88,19 @@ public class WaypointScreen extends Screen {
         // Position the gui on the screen, and get the right texture
         this.blit(matrixStack, centerX, centerY, GUI_WIDTH_OFFSET, GUI_HEIGHT_OFFSET, GUI_WIDTH, GUI_HEIGHT);
 
-        // draw all the TextBoxes in the ArrayList on the screen
-        if (!this.waypointsTextbox.isEmpty()) {
-            for (TextFieldWidget waypoint : this.waypointsTextbox) {
-                waypoint.setEnabled(false);
-                waypoint.render(matrixStack, mouseX, mouseY, partialTicks);
+        // draw all the Strings in the ArrayList on the screen
+        if (!this.getWaypointsNames().isEmpty()) {
+            for (int i = 0; i < this.getWaypointsNames().size(); i++) {
+                this.font.drawString(matrixStack, getWaypointsNames().get(i), (this.width/2) - BUTTON_HEIGHT*2,centerY +
+                        BUTTON_OFFSET + (i*(BUTTON_HEIGHT + BUTTON_HEIGHT/4)), 0x000000);
             }
         }
 
         // draw all the Buttons in the list on the screen
+        this.buttons.get(0).render(matrixStack, mouseX, mouseY, partialTicks);
         if (!this.buttons.isEmpty()) {
-            for (Widget button : this.buttons) {
-                button.render(matrixStack, mouseX, mouseY, partialTicks);
+            for (int j = 1; j < this.getWaypointsNames().size() * 2 + 1; j++) {
+                this.buttons.get(j).render(matrixStack, mouseX, mouseY, partialTicks);
             }
         }
     }
@@ -133,19 +112,24 @@ public class WaypointScreen extends Screen {
         public void onPress(Button button) { }
     }
 
-    // Makes it so the screen doesnt pause when the GUI is opened
+    // Makes it so the game doesnt pause when the GUI is opened
     @Override
     public boolean isPauseScreen() {
         return false;
     }
 
-    @Override
-    public void tick() {
-        Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(h -> {
-            if (h.getWaypoints().size() != this.waypointsTextbox.size()) {
-                this.init();
+    // Get the current list of waypoints
+    public ArrayList<String> getWaypointsNames() {
+        ArrayList<String> waypoints = new ArrayList<>();
+        Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
+            if (capability.getWaypointsNames() != null) {
+                waypoints.addAll(capability.getWaypointsNames());
             }
         });
+        if (waypoints.size() == 1 && waypoints.get(0).equals("")) {
+            waypoints.clear();
+        }
+        return waypoints;
     }
 
     static class PathingButton extends Button {
@@ -262,7 +246,6 @@ public class WaypointScreen extends Screen {
             // send a packet to the server telling it to remove the waypoint, using its index value
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
                 ModNetwork.CHANNEL.sendToServer(new RemoveWaypointMesage(capability.getWaypointsNames().get(waypoint)));
-
             });
         }
     }

@@ -117,7 +117,7 @@ public final class SetWaypointScreen extends Screen {
     }
 
     @Override
-    // Makes it so the screen doesnt pause when the GUI is opened
+    // Makes it so the game doesnt pause when the GUI is opened
     public boolean isPauseScreen() {
         return false;
     }

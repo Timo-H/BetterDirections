@@ -22,8 +22,8 @@ public class ModNetwork {
                 ShowNodesMessage::handle);
         CHANNEL.registerMessage(1, SetWaypointMessage.class, SetWaypointMessage::encode, SetWaypointMessage::decode,
                 SetWaypointMessage::handle);
-        CHANNEL.registerMessage(3, RemoveWaypointMesage.class, RemoveWaypointMesage::encode, RemoveWaypointMesage::decode, RemoveWaypointMesage::handle);
-        CHANNEL.registerMessage(4, SyncronizeWaypointMessage.class, SyncronizeWaypointMessage::encode,
+        CHANNEL.registerMessage(2, RemoveWaypointMesage.class, RemoveWaypointMesage::encode, RemoveWaypointMesage::decode, RemoveWaypointMesage::handle);
+        CHANNEL.registerMessage(3, SyncronizeWaypointMessage.class, SyncronizeWaypointMessage::encode,
                 SyncronizeWaypointMessage::decode, SyncronizeWaypointMessage::handle);
     }
 }

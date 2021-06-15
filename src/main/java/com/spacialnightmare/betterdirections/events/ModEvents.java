@@ -57,8 +57,6 @@ public class ModEvents {
         } else if (mc.currentScreen == null && KeyBindsInit.seeWaypoints.isPressed()) {
             // if N is pressed
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
-                System.out.println(capability.getWaypointsNames());
-                System.out.println(capability.getWaypoints());
             });
             if (world != null && player != null && world.isRemote) {
                 mc.displayGuiScreen(new WaypointScreen());

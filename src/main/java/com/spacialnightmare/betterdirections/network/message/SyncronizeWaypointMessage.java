@@ -58,5 +58,6 @@ public class SyncronizeWaypointMessage {
                 capability.setWaypointsNames(waypointsNames);
             });
         });
+        context.setPacketHandled(true);
     }
 }
