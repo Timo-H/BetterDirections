@@ -1,6 +1,8 @@
 package com.spacialnightmare.betterdirections.nodes;
 
 import com.spacialnightmare.betterdirections.util.Config;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 // this class has all the methods used by the Node Capability
 public class NodeHandler {
 
-    public static Boolean NodeVisibility = true;
+    public static Boolean NodeVisibility = false;
 
     public static Chunk midChunk;
 
@@ -54,7 +56,7 @@ public class NodeHandler {
             for (int j = 0; j < 16; j += distanceBetweenNodes) {
                 // Storing the coords in a BlockPos variable
                 int x = chunk.getPos().getXStart() + i;
-                int y = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, chunk.getPos().getXStart() + i,
+                int y = chunk.getTopBlockY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, chunk.getPos().getXStart() + i,
                         chunk.getPos().getZStart() + j);
                 int z = chunk.getPos().getZStart() + j;
 
@@ -78,15 +80,15 @@ public class NodeHandler {
     }
 
     // showing the nodes as gold block at Y 100 (actual nodes are at ground level), if there is no block in the way.
-    public static void ShowNode(BlockPos pos, World world, Boolean visible) {
+    public static void ShowNode(BlockPos pos, World world, Boolean visible, BlockState block) {
         if (visible) {
             // replace block with Gold block at the given BlockPos, but only if the block is air
             if (world.isAirBlock(pos)) {
-                world.setBlockState(pos, Blocks.GOLD_BLOCK.getDefaultState());
+                world.setBlockState(pos, block);
             }
         } else {
             // replace the gold block back with air again
-            if (world.getBlockState(pos) == Blocks.GOLD_BLOCK.getDefaultState()) {
+            if (world.getBlockState(pos) == block) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
         }

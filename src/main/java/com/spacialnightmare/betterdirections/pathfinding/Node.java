@@ -63,4 +63,12 @@ public class Node {
     public int hashCode() {
         return Objects.hash(loc);
     }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "loc=" + getLoc() +
+                ", FCost=" + getFCost() +
+                '}';
+    }
 }

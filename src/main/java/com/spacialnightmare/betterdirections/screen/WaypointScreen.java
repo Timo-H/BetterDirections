@@ -3,6 +3,7 @@ package com.spacialnightmare.betterdirections.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
+import com.spacialnightmare.betterdirections.network.message.CreatePathMessage;
 import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
 import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
@@ -206,9 +208,11 @@ public class WaypointScreen extends Screen {
                         if (WaypointHandler.isPathing()) {
                             // set the PathingTo String to the name of the destination waypoint
                             WaypointHandler.setIsPathingTo(capability.getWaypointsNames().get(waypointIndex));
-
+                            // send a packet to the server to find the best route
+                            ModNetwork.CHANNEL.sendToServer(new CreatePathMessage(waypointIndex));
                         } else {
                             // set the PathingTo String to an empty string
+                            WaypointHandler.setPath(null);
                             WaypointHandler.setIsPathingTo("");
                         }
 

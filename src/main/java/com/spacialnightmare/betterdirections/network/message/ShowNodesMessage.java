@@ -2,6 +2,8 @@ package com.spacialnightmare.betterdirections.network.message;
 
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
+import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -61,7 +63,17 @@ public class ShowNodesMessage {
                     // for every node in a chunk
                     for (BlockPos node : nodes) {
                         // show the nodes using gold blocks
-                        NodeHandler.ShowNode(new BlockPos(node.getX(), 100, node.getZ()), world, message.visible);
+                        NodeHandler.ShowNode(new BlockPos(node.getX(), 90, node.getZ()), world, message.visible,
+                                Blocks.GOLD_BLOCK.getDefaultState());
+                        // if there is a path to a waypoint currently active
+                        if (WaypointHandler.isPathing()) {
+                            // and the node is part of that path
+                            if (WaypointHandler.getPath() != null && WaypointHandler.getPath().contains(node)) {
+                                // place a diamond block under the gold one to indicate that it is part of the path
+                                NodeHandler.ShowNode(new BlockPos(node.getX(), 85, node.getZ()), world, message.visible,
+                                        Blocks.REDSTONE_BLOCK.getDefaultState());
+                            }
+                        }
                     }
                 });
             }

@@ -1,7 +1,10 @@
 package com.spacialnightmare.betterdirections.pathfinding;
 
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.util.Config;
+import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -17,6 +20,9 @@ public class AStarPathfinding {
 
     // create a path to the waypoint
     public static void createPath(BlockPos startPos, BlockPos endPos, World world) {
+        WaypointHandler.setPath(null);
+        OPEN.clear();
+        CLOSED.clear();
         // create start and target node based on given coordinates
         Node startNode = new Node(startPos, 0, Heuristic(startPos, endPos));
         Node targetNode = new Node(endPos, Heuristic(startPos, endPos), 0);
@@ -29,12 +35,25 @@ public class AStarPathfinding {
             // remove the current node from OPEN and add it to CLOSED
             OPEN.remove(current);
             CLOSED.add(current);
-            // if the current node == target node then set endReached as true
-            if (current == targetNode) {
+            // if the current node == target node
+            if (current.equals(targetNode)) {
+                ArrayList<BlockPos> path = new ArrayList<>();
+                Node node = current;
+                // retrace the steps by getting the parent until the parent is the starting Node
+                while (node.getParent() != null) {
+                    path.add(node.getParent().getLoc());
+                    node = node.getParent();
+                    if (node.equals(startNode)) {
+                        break;
+                    }
+                }
+                // set the Path
+                WaypointHandler.setPath(path);
                 break;
             }
             // for every neighbor of the current node
-            for (Node neighbour : getNeighbours(current, world, endPos)) {
+            ArrayList<Node> neighbours = getNeighbours(current, world, endPos);
+            for (Node neighbour : neighbours) {
                 // if neighbor is not in CLOSED
                 if (!CLOSED.contains(neighbour)) {
                     // if neighbor is in OPEN
@@ -47,9 +66,8 @@ public class AStarPathfinding {
                         }
                     // if neighbor is not in OPEN
                     } else {
-                        // set new FCost and set parent node to current
-                        OPEN.get(OPEN.indexOf(neighbour)).setFCost(neighbour.getFCost());
-                        OPEN.get(OPEN.indexOf(neighbour)).setParent(current);
+                        // set parent node to current
+                        neighbour.setParent(current);
                         // add neighbor to OPEN
                         OPEN.add(neighbour);
                     }
@@ -64,8 +82,8 @@ public class AStarPathfinding {
         int YDifference = Math.abs(startPos.getY() - endPos.getY());
         int ZDifference = Math.abs(startPos.getZ() - endPos.getZ()) / 3;
         // define the standard and diagonal step values
-        int standardStep = 10 + (YDifference * 10);
-        int diagonalStep = 14 + (YDifference * 10);
+        int standardStep = 10 + ((YDifference-1) * 10);
+        int diagonalStep = 14 + ((YDifference-1) * 10);
         // between the XDifference and ZDifference, use the smallest for the diagonal steps, and the largest - smallest
         // for the standard steps
         int heuristic = 0;
@@ -96,11 +114,10 @@ public class AStarPathfinding {
             nodes.addAll(capability.getNodes());
         });
         // loop through coordinates in a 3 x 3 around the current node
-        for (int x = current.getLoc().getX()+distanceBetweenNodes; x > current.getLoc().getX()-distanceBetweenNodes;
+        for (int x = current.getLoc().getX()+distanceBetweenNodes; x >= current.getLoc().getX()-distanceBetweenNodes;
              x -= distanceBetweenNodes) {
-            for (int z = current.getLoc().getZ()-distanceBetweenNodes; z < current.getLoc().getZ()+distanceBetweenNodes;
+            for (int z = current.getLoc().getZ()-distanceBetweenNodes; z <= current.getLoc().getZ()+distanceBetweenNodes;
                 z += distanceBetweenNodes) {
-
                 // check if the node is adjacent in a diagonal or straight line
                 int GCost;
                 if (Math.abs(x - current.getLoc().getX()) == distanceBetweenNodes &&
@@ -129,8 +146,21 @@ public class AStarPathfinding {
                     matchingNode = node.stream().filter(nodeM -> nodeM.getX() == finalX && nodeM.getZ() == finalZ)
                             .findAny().orElse(null);
                 }
+                // add to the GCost the Height Difference * 5, if it is 2 or heigher
+                if ((Math.abs(matchingNode.getY() - current.getLoc().getY())) > 1) {
+                    GCost += (Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 5;
+                }
+                // if the top block is water, add 15 to the GCost
+                if (world.getBlockState(matchingNode) == Blocks.WATER.getDefaultState()) {
+                    GCost += 10;
+                }
+
                 // add the node to the Neighbors list
-                neighbours.add(new Node(matchingNode, current.getGCost()+GCost, Heuristic(current.getLoc(), endPos)));
+                Node newNode = new Node(matchingNode, current.getGCost()+GCost, Heuristic(matchingNode, endPos));
+                if (!newNode.equals(current)) {
+                    neighbours.add(new Node(matchingNode, current.getGCost() + GCost, Heuristic(matchingNode,
+                            endPos)));
+                }
             }
         }
         return neighbours;
