@@ -61,7 +61,7 @@ public class ShowNodesMessage {
                     // for every node in a chunk
                     for (BlockPos node : nodes) {
                         // show the nodes using gold blocks
-                        NodeHandler.ShowNode(new BlockPos(node.getX(), 75, node.getZ()), world, message.visible);
+                        NodeHandler.ShowNode(new BlockPos(node.getX(), 100, node.getZ()), world, message.visible);
                     }
                 });
             }

@@ -45,16 +45,7 @@ public class NodeHandler {
     // Create the nodes for the given chunk, the amount of nodes created depends on the NODES_PER_CHUNK Integer in the config
     public static void CreateChunkNodes(Chunk chunk, World world) {
         // Determine distance between nodes depending on the NODES_PER_CHUNK
-        int distanceBetweenNodes;
-        if (Config.NODES_PER_CHUNK.get() == 256) {
-            distanceBetweenNodes = 1;
-        } else if (Config.NODES_PER_CHUNK.get() == 64) {
-            distanceBetweenNodes = 2;
-        } else if (Config.NODES_PER_CHUNK.get() == 16) {
-            distanceBetweenNodes = 4;
-        } else {
-            throw new IllegalArgumentException("Integer NODES_PER_CHUNK not correctly assigned!");
-        }
+        int distanceBetweenNodes = Config.DistanceBetweenNodes();
         ArrayList<BlockPos> nodes = new ArrayList<>();
 
         // creating rows of nodes
@@ -86,7 +77,7 @@ public class NodeHandler {
         }
     }
 
-    // showing the nodes as gold block at Y-75 (actual nodes are at ground level), if there is no block in the way.
+    // showing the nodes as gold block at Y 100 (actual nodes are at ground level), if there is no block in the way.
     public static void ShowNode(BlockPos pos, World world, Boolean visible) {
         if (visible) {
             // replace block with Gold block at the given BlockPos, but only if the block is air

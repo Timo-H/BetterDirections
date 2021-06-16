@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class WaypointHandler {
     private static boolean isPathing;
     private static String isPathingTo;
+    private static ArrayList<BlockPos> path;
 
     // Add a waypoint
     public static void addWaypoint(ServerPlayerEntity player, String waypointName) {
@@ -82,4 +83,8 @@ public class WaypointHandler {
     public static void setIsPathingTo(String isPathingTo) {
         WaypointHandler.isPathingTo = isPathingTo;
     }
+
+    public static ArrayList<BlockPos> getPath() { return path; }
+
+    public static void setPath(ArrayList<BlockPos> path) { WaypointHandler.path = path; }
 }

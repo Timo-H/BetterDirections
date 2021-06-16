@@ -13,6 +13,7 @@ public class Config {
     public static ForgeConfigSpec CLIENT_CONFIG;
 
     public static ForgeConfigSpec.IntValue NODES_PER_CHUNK;
+    public static ForgeConfigSpec.IntValue DISTANCE_BETWEEN_NODES;
 
     static {
 
@@ -31,6 +32,18 @@ public class Config {
                 "the more generated the more accurate the pathing will be.\n Amount of nodes can be: 16, 64, 256. " +
                 "Anything else will not work!")
                 .defineInRange("nodes_per_chunk", 16, 16, 256);
+    }
+    // define the Distance between nodes based on the NODES_PER_CHUNK
+    public static int DistanceBetweenNodes() {
+        if (NODES_PER_CHUNK.get() == 16) {
+            return 4;
+        } else if (NODES_PER_CHUNK.get() == 64) {
+            return 2;
+        } else if (NODES_PER_CHUNK.get() == 256) {
+            return 1;
+        } else {
+            throw new IllegalArgumentException("Integer NODES_PER_CHUNK not correctly assigned!");
+        }
     }
     // load the config file
     public static void loadConfigFile(ForgeConfigSpec config, String path) {

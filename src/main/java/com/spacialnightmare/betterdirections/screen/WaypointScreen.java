@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
+import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.client.Minecraft;
@@ -136,13 +137,13 @@ public class WaypointScreen extends Screen {
         // textureY is will need to be changed depending on what texture is used
         public int textureY;
         // waypoint index value
-        public int waypoint;
+        public int waypointIndex;
         // ResourceLocation for the texture
         ResourceLocation texture = new ResourceLocation("textures/gui/book.png");
 
-        public PathingButton(int x, int y, IPressable pressedAction, int waypoint) {
+        public PathingButton(int x, int y, IPressable pressedAction, int waypointIndex) {
             super(x, y, 18, 10, new TranslationTextComponent(""), pressedAction);
-            this.waypoint = waypoint;
+            this.waypointIndex = waypointIndex;
         }
 
         // render all the parts of the button
@@ -181,7 +182,7 @@ public class WaypointScreen extends Screen {
                     .ifPresent(capability -> {
                         // checks if the path button pressed, is the same one that is currently active
                         // then changes the Y texture value to get a different texture
-                        if (capability.getWaypointsNames().indexOf(WaypointHandler.getIsPathingTo()) == waypoint) {
+                        if (capability.getWaypointsNames().indexOf(WaypointHandler.getIsPathingTo()) == waypointIndex) {
                             this.textureY = 194;
                         } else {
                             this.textureY = 207;
@@ -197,31 +198,33 @@ public class WaypointScreen extends Screen {
                     .ifPresent(capability -> {
                         // checks if the path button pressed, is the same one that is currently active, and if so,
                         // switch the boolean value. Also switches the boolean if there was no previous path active
-                        if (capability.getWaypointsNames().indexOf(WaypointHandler.getIsPathingTo()) == waypoint ||
+                        if (capability.getWaypointsNames().indexOf(WaypointHandler.getIsPathingTo()) == waypointIndex ||
                         WaypointHandler.getIsPathingTo() == null || WaypointHandler.getIsPathingTo().equals("")) {
                             WaypointHandler.setPathing(!WaypointHandler.isPathing());
                         }
                         // check if there is a path active
                         if (WaypointHandler.isPathing()) {
                             // set the PathingTo String to the name of the destination waypoint
-                            WaypointHandler.setIsPathingTo(capability.getWaypointsNames().get(waypoint));
+                            WaypointHandler.setIsPathingTo(capability.getWaypointsNames().get(waypointIndex));
+
                         } else {
                             // set the PathingTo String to an empty string
                             WaypointHandler.setIsPathingTo("");
                         }
+
                 });
         }
     }
     // Create a delete button for the waypoints
     static class DeleteButton extends Button {
         // index value for waypoint
-        public int waypoint;
+        public int waypointIndex;
         // resourceLocation for the texture
         ResourceLocation texture = new ResourceLocation("textures/gui/book.png");
 
-        public DeleteButton(int x, int y, IPressable pressedAction, int waypoint) {
+        public DeleteButton(int x, int y, IPressable pressedAction, int waypointIndex) {
             super(x, y, 8, 9, new TranslationTextComponent(""), pressedAction);
-            this.waypoint = waypoint;
+            this.waypointIndex = waypointIndex;
         }
         // render all the parts of the button
         @Override
@@ -245,7 +248,7 @@ public class WaypointScreen extends Screen {
         public void onPress() {
             // send a packet to the server telling it to remove the waypoint, using its index value
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
-                ModNetwork.CHANNEL.sendToServer(new RemoveWaypointMesage(capability.getWaypointsNames().get(waypoint)));
+                ModNetwork.CHANNEL.sendToServer(new RemoveWaypointMesage(capability.getWaypointsNames().get(waypointIndex)));
             });
         }
     }
