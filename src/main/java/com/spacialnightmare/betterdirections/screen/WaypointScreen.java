@@ -4,16 +4,16 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.CreatePathMessage;
+import com.spacialnightmare.betterdirections.network.message.TogglePathMessage;
 import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
-import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class WaypointScreen extends Screen {
         int centerY = (this.height/2) - GUI_HEIGHT / 2;
 
         // add the Exit button using Button values
-        this.addButton(new Button((this.width/2) + 30, centerY -20, BUTTON_WIDTH/2, BUTTON_HEIGHT,
+        this.addButton(new Button((this.width/2) + 35, centerY -20, BUTTON_WIDTH/2, BUTTON_HEIGHT,
                 new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".exit"),
                 (ButtonAction) -> {
                     this.closeScreen();
@@ -196,6 +196,7 @@ public class WaypointScreen extends Screen {
         // action taken when the button is pressed
         @Override
         public void onPress() {
+            World world = Minecraft.getInstance().world;
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
                     .ifPresent(capability -> {
                         // checks if the path button pressed, is the same one that is currently active, and if so,
@@ -211,9 +212,10 @@ public class WaypointScreen extends Screen {
                             // send a packet to the server to find the best route
                             ModNetwork.CHANNEL.sendToServer(new CreatePathMessage(waypointIndex));
                         } else {
-                            // set the PathingTo String to an empty string
+                            // set the Path to null
                             WaypointHandler.setPath(null);
                             WaypointHandler.setIsPathingTo("");
+                            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage());
                         }
 
                 });

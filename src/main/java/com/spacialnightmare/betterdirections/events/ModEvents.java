@@ -2,9 +2,11 @@ package com.spacialnightmare.betterdirections.events;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
+import com.spacialnightmare.betterdirections.network.message.TogglePathMessage;
 import com.spacialnightmare.betterdirections.network.message.ShowNodesMessage;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
+import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.screen.SetWaypointScreen;
 import com.spacialnightmare.betterdirections.screen.WaypointScreen;
 import com.spacialnightmare.betterdirections.util.KeyBindsInit;
@@ -51,19 +53,22 @@ public class ModEvents {
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
             // if B is pressed
             if (world != null && player != null && world.isRemote) {
+                // Display SetWaypoint Gui
                 mc.displayGuiScreen(new SetWaypointScreen());
             }
         // if there is no screen open & a keybind is pressed
         } else if (mc.currentScreen == null && KeyBindsInit.seeWaypoints.isPressed()) {
             // if N is pressed
-            Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
-            });
             if (world != null && player != null && world.isRemote) {
+                // Display Waypoint Gui
                 mc.displayGuiScreen(new WaypointScreen());
             }
         // if there is no screen open & a keybind is pressed
         } else if (mc.currentScreen == null && KeyBindsInit.togglePathing.isPressed()) {
             // if M is pressed
+            player.sendStatusMessage(new TranslationTextComponent("message.toggle_path"), true);
+            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(!AStarPathfinding.isVISIBLE()));
+            AStarPathfinding.setVISIBLE(!AStarPathfinding.isVISIBLE());
         }
     }
 

@@ -4,6 +4,7 @@ import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.util.Config;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -17,6 +18,8 @@ public class AStarPathfinding {
     public static ArrayList<Node> OPEN = new ArrayList<>();
     // set of nodes already evaluated
     public static ArrayList<Node> CLOSED = new ArrayList<>();
+    // Boolean for visibility of the path
+    public static boolean VISIBLE;
 
     // create a path to the waypoint
     public static void createPath(BlockPos startPos, BlockPos endPos, World world) {
@@ -35,6 +38,8 @@ public class AStarPathfinding {
             // remove the current node from OPEN and add it to CLOSED
             OPEN.remove(current);
             CLOSED.add(current);
+            drawNode(current, Blocks.RED_WOOL.getDefaultState(), world, true);
+
             // if the current node == target node
             if (current.equals(targetNode)) {
                 ArrayList<BlockPos> path = new ArrayList<>();
@@ -49,6 +54,7 @@ public class AStarPathfinding {
                 }
                 // set the Path
                 WaypointHandler.setPath(path);
+                setVISIBLE(true);
                 break;
             }
             // for every neighbor of the current node
@@ -70,6 +76,7 @@ public class AStarPathfinding {
                         neighbour.setParent(current);
                         // add neighbor to OPEN
                         OPEN.add(neighbour);
+                        drawNode(neighbour, Blocks.LIME_WOOL.getDefaultState(), world, true);
                     }
                 }
             }
@@ -82,8 +89,12 @@ public class AStarPathfinding {
         int YDifference = Math.abs(startPos.getY() - endPos.getY());
         int ZDifference = Math.abs(startPos.getZ() - endPos.getZ()) / 3;
         // define the standard and diagonal step values
-        int standardStep = 10 + ((YDifference-1) * 10);
-        int diagonalStep = 14 + ((YDifference-1) * 10);
+        int standardStep = 10;
+        int diagonalStep = 14;
+        if (YDifference > 1) {
+             standardStep += ((YDifference - 1) * 10);
+             diagonalStep += ((YDifference - 1) * 10);
+        }
         // between the XDifference and ZDifference, use the smallest for the diagonal steps, and the largest - smallest
         // for the standard steps
         int heuristic = 0;
@@ -119,14 +130,14 @@ public class AStarPathfinding {
             for (int z = current.getLoc().getZ()-distanceBetweenNodes; z <= current.getLoc().getZ()+distanceBetweenNodes;
                 z += distanceBetweenNodes) {
                 // check if the node is adjacent in a diagonal or straight line
-                int GCost;
+                int GCost = 0;
                 if (Math.abs(x - current.getLoc().getX()) == distanceBetweenNodes &&
                         Math.abs(z - current.getLoc().getZ()) == distanceBetweenNodes) {
                     // GCost for diagonal neighbors
-                    GCost = 14;
+                    GCost += 14;
                 } else {
                     // GCost for directly adjacent neighbors
-                    GCost = 10;
+                    GCost += 10;
                 }
 
                 int finalX = x;
@@ -147,22 +158,41 @@ public class AStarPathfinding {
                             .findAny().orElse(null);
                 }
                 // add to the GCost the Height Difference * 5, if it is 2 or heigher
-                if ((Math.abs(matchingNode.getY() - current.getLoc().getY())) > 1) {
+                if (matchingNode.getY() - current.getLoc().getY() > 1) {
                     GCost += (Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 5;
+                    System.out.println("Height difference: GCost + " +
+                            (Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 5);
+                    System.out.println("GCost is now: " + current.getGCost()+GCost);
                 }
                 // if the top block is water, add 15 to the GCost
                 if (world.getBlockState(matchingNode) == Blocks.WATER.getDefaultState()) {
+                    BlockPos waterNode = new BlockPos(matchingNode.getX(), matchingNode.getY() + 6, matchingNode.getZ());
+                    NodeHandler.ShowNode(waterNode, world, true, Blocks.BLUE_WOOL.getDefaultState());
                     GCost += 10;
+                    System.out.println("Water: GCost + 10");
+                    System.out.println("GCost is now: " + current.getGCost()+GCost);
                 }
 
                 // add the node to the Neighbors list
                 Node newNode = new Node(matchingNode, current.getGCost()+GCost, Heuristic(matchingNode, endPos));
                 if (!newNode.equals(current)) {
-                    neighbours.add(new Node(matchingNode, current.getGCost() + GCost, Heuristic(matchingNode,
-                            endPos)));
+                    neighbours.add(newNode);
                 }
             }
         }
         return neighbours;
+    }
+
+    public static void drawNode(Node node, BlockState block, World world, Boolean draw) {
+        BlockPos nodeLoc = new BlockPos(node.getLoc().getX(), node.getLoc().getY() + 5, node.getLoc().getZ());
+        NodeHandler.ShowNode(nodeLoc, world, draw, block);
+    }
+    // Getter and Setter for path visibility
+    public static boolean isVISIBLE() {
+        return VISIBLE;
+    }
+
+    public static void setVISIBLE(boolean VISIBLE) {
+        AStarPathfinding.VISIBLE = VISIBLE;
     }
 }

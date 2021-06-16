@@ -82,12 +82,10 @@ public class NodeHandler {
     // showing the nodes as gold block at Y 100 (actual nodes are at ground level), if there is no block in the way.
     public static void ShowNode(BlockPos pos, World world, Boolean visible, BlockState block) {
         if (visible) {
-            // replace block with Gold block at the given BlockPos, but only if the block is air
-            if (world.isAirBlock(pos)) {
-                world.setBlockState(pos, block);
-            }
+            // replace block with given block at the given BlockPos
+            world.setBlockState(pos, block);
         } else {
-            // replace the gold block back with air again
+            // replace the given block back with air again
             if (world.getBlockState(pos) == block) {
                 world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }

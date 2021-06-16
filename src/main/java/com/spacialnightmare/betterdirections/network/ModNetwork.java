@@ -28,5 +28,7 @@ public class ModNetwork {
                 SyncronizeWaypointMessage::decode, SyncronizeWaypointMessage::handle);
         CHANNEL.registerMessage(4, CreatePathMessage.class, CreatePathMessage::encode, CreatePathMessage::decode,
                 CreatePathMessage::handle);
+        CHANNEL.registerMessage(5, TogglePathMessage.class, TogglePathMessage::encode, TogglePathMessage::decode,
+                TogglePathMessage::handle);
     }
 }

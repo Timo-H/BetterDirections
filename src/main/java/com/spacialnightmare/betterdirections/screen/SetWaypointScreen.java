@@ -49,7 +49,7 @@ public final class SetWaypointScreen extends Screen {
                         }
                     }));
         // add the Exit button using Button values
-        this.addButton(new Button((this.width/2) + this.width/10, centerY -20, BUTTON_WIDTH/2, BUTTON_HEIGHT,
+        this.addButton(new Button((this.width/2) + 35, centerY -20, BUTTON_WIDTH/2, BUTTON_HEIGHT,
                     new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".exit"),
                     (ButtonAction) -> {
                         this.closeScreen();
