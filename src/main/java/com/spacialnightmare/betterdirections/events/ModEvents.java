@@ -10,7 +10,6 @@ import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.screen.SetWaypointScreen;
 import com.spacialnightmare.betterdirections.screen.WaypointScreen;
 import com.spacialnightmare.betterdirections.util.KeyBindsInit;
-import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -31,13 +30,7 @@ public class ModEvents {
         if (mc.world == null) return;
         onInput(mc, event.getKey(), event.getAction());
     }
-    // action when mouse is clicked
-    @SubscribeEvent
-    public static void onMouseClick(InputEvent.MouseInputEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.world == null) return;
-        onInput(mc, event.getButton(), event.getAction());
-    }
+
     // when an input is given, run the appropriate code
     private static void onInput(Minecraft mc, int key, int action) {
         PlayerEntity player = mc.player;
@@ -48,6 +41,8 @@ public class ModEvents {
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
             // send a packet to the server containing a boolean to set the nodes Visible/Invisible
             ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
+            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(AStarPathfinding.isVISIBLE()));
+            AStarPathfinding.setVISIBLE(AStarPathfinding.isVISIBLE());
             NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
         // if there is no screen open & a keybind is pressed
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
@@ -67,8 +62,6 @@ public class ModEvents {
         } else if (mc.currentScreen == null && KeyBindsInit.togglePathing.isPressed()) {
             // if M is pressed
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_path"), true);
-            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(!AStarPathfinding.isVISIBLE()));
-            AStarPathfinding.setVISIBLE(!AStarPathfinding.isVISIBLE());
         }
     }
 

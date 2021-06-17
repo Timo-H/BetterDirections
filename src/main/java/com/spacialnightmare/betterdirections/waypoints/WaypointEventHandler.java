@@ -20,6 +20,7 @@ public class WaypointEventHandler {
     @SubscribeEvent
     public void AttachPlayerCapability(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof PlayerEntity) {
+            System.out.println("Attaching capability");
             WaypointsProvider provider = new WaypointsProvider();
             // attach a capability to the Entity if it is a player
             event.addCapability(new ResourceLocation(BetterDirections.MOD_ID, "waypoints"), provider);
@@ -30,25 +31,36 @@ public class WaypointEventHandler {
     // Synchronize waypoints on player login
     @SubscribeEvent
     public void PlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
+        System.out.println("Player logged in!");
+        IWaypoints capability = event.getPlayer().getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
+                .orElseThrow(() -> new IllegalArgumentException("at login"));
+        System.out.println(capability.getWaypointsNames());
         synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                 (ServerPlayerEntity) event.getPlayer());
     }
-    // Synchronize waypoints on player respawn
+    // copy the capability when a playerEntity is cloned (Death, Going from End to overworld)
     @SubscribeEvent
-    public void PlayerRespawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+    public void PlayerCloneEvent(PlayerEvent.Clone event) {
+        // get old waypoints capability
+        IWaypoints oldWaypoints = event.getOriginal().getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
+                .orElseThrow(() -> new IllegalArgumentException("at cloning"));
+        // get new waypoints capability
+        IWaypoints waypoints = event.getPlayer().getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
+                .orElseThrow(() -> new IllegalArgumentException("at pasting"));
+        // copy the old capability to the new one
+        waypoints.setWaypoints(oldWaypoints.getWaypoints());
+        waypoints.setWaypointsNames(oldWaypoints.getWaypointsNames());
+        // synchronize waypoints to the client
         synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                 (ServerPlayerEntity) event.getPlayer());
     }
-    // Synchronize waypoints when a player changes dimensions
-    @SubscribeEvent
-    public void PlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-        synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
-                (ServerPlayerEntity) event.getPlayer());
-    }
+
     // Synchronize player Waypoints
     public void synchronizePlayerWaypoints(PacketDistributor.PacketTarget target, ServerPlayerEntity player) {
         player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
+            System.out.println(capability.getWaypointsNames());
             if (capability.getWaypoints() != null) {
+                System.out.println("Old Capability: " + capability.getWaypointsNames());
                 // read the coordinates
                 int[] waypoints = new int[3 * capability.getWaypoints().size()];
                 int i = 0;

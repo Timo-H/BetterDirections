@@ -5,21 +5,20 @@ import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeEventHandler;
+import com.spacialnightmare.betterdirections.screen.ConfigScreen;
 import com.spacialnightmare.betterdirections.setup.ClientProxy;
 import com.spacialnightmare.betterdirections.setup.IProxy;
 import com.spacialnightmare.betterdirections.setup.ServerProxy;
-import com.spacialnightmare.betterdirections.util.Config;
 import com.spacialnightmare.betterdirections.util.Registration;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,30 +46,19 @@ public class BetterDirections
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
-        registerConfigs();
-
+    private void setup(final FMLCommonSetupEvent event) {
+        // Initiate the proxy
         proxy.init();
-
-        loadConfigs();
-
+        // Register the ConfigScreen
+        ModLoadingContext.get().registerExtensionPoint(
+                ExtensionPoint.CONFIGGUIFACTORY,
+                () -> (mc, screen) -> new ConfigScreen(screen)
+        );
         // Initiate the network for the mod
         ModNetwork.init();
-
         // Register the Capabilities
         CapabilityWaypoints.register();
         CapabilityChunkNodes.register();
-         }
-    // Register the Client and Server configs
-    private void registerConfigs() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
-    }
-    // Load the Client and Server configs
-    private void loadConfigs() {
-        Config.loadConfigFile(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve("betterdirections-client.toml").toString());
-        Config.loadConfigFile(Config.SERVER_CONFIG, FMLPaths.CONFIGDIR.get().resolve("betterdirections-server.toml").toString());
     }
 
     private void registerModAdditions() {

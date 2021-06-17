@@ -1,7 +1,6 @@
 package com.spacialnightmare.betterdirections.nodes;
 
-import com.spacialnightmare.betterdirections.util.Config;
-import net.minecraft.block.Block;
+import com.spacialnightmare.betterdirections.util.ConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -14,9 +13,11 @@ import java.util.ArrayList;
 
 // this class has all the methods used by the Node Capability
 public class NodeHandler {
-
+    // Get the instance of the Config Manager
+    private static final ConfigManager CMI = ConfigManager.getInstance();
+    // Boolean that keeps track of the visibility of the nodes
     public static Boolean NodeVisibility = false;
-
+    // Initial Chunk an action was activated
     public static Chunk midChunk;
 
     public static Boolean getNodeVisibility() {
@@ -41,13 +42,13 @@ public class NodeHandler {
         if (exNodes == null) {
             return true;
         }
-        return exNodes.size() != Config.NODES_PER_CHUNK.get();
+        return exNodes.size() != CMI.nodesPerChunk();
     }
 
     // Create the nodes for the given chunk, the amount of nodes created depends on the NODES_PER_CHUNK Integer in the config
     public static void CreateChunkNodes(Chunk chunk, World world) {
         // Determine distance between nodes depending on the NODES_PER_CHUNK
-        int distanceBetweenNodes = Config.DistanceBetweenNodes();
+        int distanceBetweenNodes = CMI.distanceBetweenNodes();
         ArrayList<BlockPos> nodes = new ArrayList<>();
 
         // creating rows of nodes
@@ -82,8 +83,10 @@ public class NodeHandler {
     // showing the nodes as gold block at Y 100 (actual nodes are at ground level), if there is no block in the way.
     public static void ShowNode(BlockPos pos, World world, Boolean visible, BlockState block) {
         if (visible) {
-            // replace block with given block at the given BlockPos
-            world.setBlockState(pos, block);
+            // replace block with given block at the given BlockPos if it is air
+            if (world.isAirBlock(pos)) {
+                world.setBlockState(pos, block);
+            }
         } else {
             // replace the given block back with air again
             if (world.getBlockState(pos) == block) {

@@ -1,9 +1,12 @@
 package com.spacialnightmare.betterdirections.network.message;
 
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.pathfinding.Node;
+import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.block.Blocks;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -32,13 +35,6 @@ public class TogglePathMessage {
         context.enqueueWork(() -> {
             // get world
             World world = context.getSender().getEntityWorld();
-            // delete the node indicators
-            for (Node node : AStarPathfinding.OPEN) {
-                AStarPathfinding.drawNode(node, Blocks.LIME_WOOL.getDefaultState(), world, message.visible);
-            }
-            for (Node node : AStarPathfinding.CLOSED) {
-                AStarPathfinding.drawNode(node, Blocks.RED_WOOL.getDefaultState(), world, message.visible);
-            }
         });
     }
 }

@@ -2,6 +2,8 @@ package com.spacialnightmare.betterdirections.network.message;
 
 import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
+import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
+import com.spacialnightmare.betterdirections.pathfinding.Node;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -58,20 +60,32 @@ public class ShowNodesMessage {
             }
             // for every chunk in the list
             for (Chunk chunk : chunks) {
+                for (int x = chunk.getPos().getXStart(); x < chunk.getPos().getXStart() + 16; x++) {
+                    for (int z = chunk.getPos().getZStart(); z < chunk.getPos().getZStart() + 16; z++) {
+                        NodeHandler.ShowNode(new BlockPos(x, 108, z), world, message.visible,
+                                Blocks.WHITE_WOOL.getDefaultState());
+                    }
+                }
                 chunk.getCapability(CapabilityChunkNodes.CHUNK_NODES_CAPABILITY).ifPresent(h -> {
                     ArrayList<BlockPos> nodes = h.getNodes();
                     // for every node in a chunk
-                    for (BlockPos node : nodes) {
+                    for (BlockPos pos : nodes) {
                         // show the nodes using gold blocks
-                        NodeHandler.ShowNode(new BlockPos(node.getX(), 90, node.getZ()), world, message.visible,
-                                Blocks.GOLD_BLOCK.getDefaultState());
+                        NodeHandler.ShowNode(new BlockPos(pos.getX(), 109, pos.getZ()), world, message.visible,
+                                Blocks.BLACK_WOOL.getDefaultState());
                         // if there is a path to a waypoint currently active
                         if (WaypointHandler.isPathing()) {
                             // and the node is part of that path
-                            if (WaypointHandler.getPath() != null && WaypointHandler.getPath().contains(node)) {
-                                // place a diamond block under the gold one to indicate that it is part of the path
-                                NodeHandler.ShowNode(new BlockPos(node.getX(), 85, node.getZ()), world, message.visible,
-                                        Blocks.REDSTONE_BLOCK.getDefaultState());
+                            // toggle the pathing node indicators
+                            for (Node node : AStarPathfinding.OPEN) {
+                                AStarPathfinding.drawNode(node, Blocks.LIME_WOOL.getDefaultState(), world, message.visible);
+                            }
+                            for (Node node : AStarPathfinding.CLOSED) {
+                                AStarPathfinding.drawNode(node, Blocks.RED_WOOL.getDefaultState(), world, message.visible);
+                            }
+                            for (BlockPos node : WaypointHandler.getPath()) {
+                                BlockPos pathNode = new BlockPos(node.getX(), 111, node.getZ());
+                                NodeHandler.ShowNode(pathNode, world, message.visible, Blocks.GOLD_BLOCK.getDefaultState());
                             }
                         }
                     }

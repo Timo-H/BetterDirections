@@ -10,6 +10,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CapabilityWaypoints {
     // Inject the Capability IWaypoints into this class
@@ -34,7 +35,10 @@ public class CapabilityWaypoints {
 
                     int[] waypoint = {instance.getWaypoints().get(i).getX(), instance.getWaypoints().get(i).getY(),
                             instance.getWaypoints().get(i).getZ()};
-                    tag.putIntArray(instance.getWaypointsNames().get(i), waypoint);
+                    System.out.println(Arrays.toString(waypoint));
+                    tag.putIntArray("waypoint" + i, waypoint);
+                    tag.putString("waypointname" + i, instance.getWaypointsNames().get(i));
+                tag.putInt("totalwaypoints", instance.getWaypoints().size());
                 }
             }
             return tag;
@@ -43,23 +47,19 @@ public class CapabilityWaypoints {
         @Override
         // read the NBT data when an object is loaded, and sets the data for it
         public void readNBT(Capability<IWaypoints> capability, IWaypoints instance, Direction side, INBT nbt) {
+            ArrayList<BlockPos> waypoints = new ArrayList<>();
+            ArrayList<String> waypointsNames = new ArrayList<>();
 
-            if (instance.getWaypoints() == null) {
-                instance.setWaypoints(instance.getWaypoints());
-
-            } else {
-
-                ArrayList<BlockPos> waypoints = new ArrayList<>();
-
-                for (int i = 0; i < instance.getWaypoints().size(); i++) {
-
-                    int[] waypointsArray = ((CompoundNBT) nbt).getIntArray(instance.getWaypointsNames().get(i));
-                    BlockPos waypoint = new BlockPos(waypointsArray[0], waypointsArray[1], waypointsArray[2]);
-                    waypoints.add(waypoint);
-                }
-                instance.setWaypoints(waypoints);
+            CompoundNBT data = (CompoundNBT) nbt;
+            int totalWaypoints = data.getInt("totalwaypoints");
+            for (int i = 0; i < totalWaypoints; i++) {
+                int[] waypoint = data.getIntArray("waypoint" + i);
+                waypoints.add(new BlockPos(waypoint[0], waypoint[1], waypoint[2]));
+                waypointsNames.add(data.getString("waypointname" + i));
             }
-            instance.setWaypointsNames(instance.getWaypointsNames());
+
+            instance.setWaypoints(waypoints);
+            instance.setWaypointsNames(waypointsNames);
         }
     }
 }
