@@ -6,7 +6,6 @@ import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.CreatePathMessage;
 import com.spacialnightmare.betterdirections.network.message.TogglePathMessage;
 import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
-import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
@@ -53,6 +51,14 @@ public class WaypointScreen extends Screen {
                 new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".exit"),
                 (ButtonAction) -> {
                     this.closeScreen();
+                }));
+
+        // add the Show/Hide button using Button values
+        this.addButton(new Button((this.width/2) - 105, centerY -20, BUTTON_WIDTH, BUTTON_HEIGHT,
+                new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".show"),
+                (ButtonAction) -> {
+                    WaypointHandler.setVisibleWaypoints(!WaypointHandler.isVisibleWaypoints());
+                    WaypointHandler.showWaypoints(Minecraft.getInstance().player);
                 }));
 
         // check if the player has any waypoints
@@ -103,8 +109,9 @@ public class WaypointScreen extends Screen {
 
         // draw all the Buttons in the list on the screen
         this.buttons.get(0).render(matrixStack, mouseX, mouseY, partialTicks);
+        this.buttons.get(1).render(matrixStack, mouseX, mouseY, partialTicks);
         if (!this.buttons.isEmpty()) {
-            for (int j = 1; j < this.getWaypointsNames().size() * 2 + 1; j++) {
+            for (int j = 2; j < this.getWaypointsNames().size() * 2 + 2; j++) {
                 this.buttons.get(j).render(matrixStack, mouseX, mouseY, partialTicks);
             }
         }
@@ -250,6 +257,17 @@ public class WaypointScreen extends Screen {
         // action taken when pressed
         @Override
         public void onPress() {
+            // check if there is a path active
+            if (WaypointHandler.isPathing()) {
+                // check if the active path is visible
+                if (!AStarPathfinding.isVISIBLE()) {
+                    // if it is visible, toggle it
+                    ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(false));
+                }
+                // delete the current path destination
+                WaypointHandler.setPathing(false);
+                WaypointHandler.setIsPathingTo("");
+            }
             // send a packet to the server telling it to remove the waypoint, using its index value
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
                 ModNetwork.CHANNEL.sendToServer(new RemoveWaypointMesage(capability.getWaypointsNames().get(waypointIndex)));

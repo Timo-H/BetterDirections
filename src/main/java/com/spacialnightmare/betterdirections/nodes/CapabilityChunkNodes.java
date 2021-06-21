@@ -35,6 +35,7 @@ public class CapabilityChunkNodes {
                 for (int i = 0; i < CMI.nodesPerChunk(); i++) {
                     int[] node = {instance.getNodes().get(i).getX(), instance.getNodes().get(i).getY(),
                             instance.getNodes().get(i).getZ()};
+                    // put the node into the tag
                     tag.putIntArray("node" + i, node);
                 }
             }
@@ -45,7 +46,9 @@ public class CapabilityChunkNodes {
         // read the NBT data when an object is loaded, and sets the data for it
         public void readNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side, INBT nbt) {
             CompoundNBT data = (CompoundNBT) nbt;
+            // check if data read, is the same size as NodesPerChunk
             if (data.size() == CMI.nodesPerChunk()) {
+                // if it is, read the data into an Arraylist
                 ArrayList<BlockPos> nodes = new ArrayList<>();
                 for (int i = 0; i < CMI.nodesPerChunk(); i++) {
 
@@ -53,8 +56,12 @@ public class CapabilityChunkNodes {
                     BlockPos node = new BlockPos(nodeArray[0], nodeArray[1], nodeArray[2]);
                     nodes.add(node);
                 }
+                // set the nodes
                 instance.setNodes(nodes);
             } else {
+                // if the size doesnt match, it means the NodesPerChunk Config has been changed
+                // set the nodes to null, when chunks get loaded, they will create new nodes
+                // based on the NodesPerChunk config
                 instance.setNodes(null);
             }
         }

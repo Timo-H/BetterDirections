@@ -30,7 +30,9 @@ public class RemoveWaypointMesage {
     public static void handle(RemoveWaypointMesage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
+            // get the player
             ServerPlayerEntity player = context.getSender();
+            // remove the waypoint
             WaypointHandler.removeWaypoint(player, message.waypointName);
             // Synchronize to the client
             WaypointSynchronisation.Synchronize(player, context);

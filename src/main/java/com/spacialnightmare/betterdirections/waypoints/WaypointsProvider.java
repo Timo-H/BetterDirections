@@ -1,6 +1,5 @@
 package com.spacialnightmare.betterdirections.waypoints;
 
-import com.spacialnightmare.betterdirections.nodes.CapabilityChunkNodes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;

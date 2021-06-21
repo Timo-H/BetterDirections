@@ -3,19 +3,15 @@ package com.spacialnightmare.betterdirections.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.util.ConfigManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
 import net.minecraft.client.settings.BooleanOption;
-import net.minecraft.client.settings.SliderMultiplierOption;
 import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
 
 // ConfigScreen displayed when u press on the mod Config button
 // Used implementation from 'https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html'
@@ -50,7 +46,8 @@ public class ConfigScreen extends Screen {
         // Create the options row list
         this.optionsRowList = new OptionsRowList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT,
                 this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-
+        // Add a slideBar to the optionsRowList, with this slideBar you will be able to change the
+        // nodePerChunk Value
         this.optionsRowList.addOption(new SliderPercentageOption("gui." + BetterDirections.MOD_ID
                 + ".configgui.nodesperchunk.title",
                 0.0, 2.0,
@@ -60,7 +57,8 @@ public class ConfigScreen extends Screen {
 
                 (gs, option) -> new StringTextComponent("Nodes generated per chunk: " + CMI.nodesPerChunk())
         ));
-
+        // Add a slideBar to the optionsRowList, with this slideBar you will be able to change the
+        // radiusChunkNodes Value
         this.optionsRowList.addOption(new SliderPercentageOption("gui." + BetterDirections.MOD_ID
                 + ".configgui.radiusnodes.title",
                 0.0, 5.0,
@@ -71,7 +69,8 @@ public class ConfigScreen extends Screen {
                 (gs, option) -> new StringTextComponent("Radius for Nodes loaded: " + CMI.radiusChunkNodes()
                 )
         ));
-
+        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle the
+        // ShowCalculatedNodes
         this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
                 ".configgui.showcnodes.title",
                 unused -> CMI.showCalculatedNodes(),
@@ -101,7 +100,7 @@ public class ConfigScreen extends Screen {
                 this.width / 2, TITLE_HEIGHT, 0xFFFFFF);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
-
+    // empty ButtonAction, is already defined
     private enum ButtonAction implements Button.IPressable {
         ;
         @Override

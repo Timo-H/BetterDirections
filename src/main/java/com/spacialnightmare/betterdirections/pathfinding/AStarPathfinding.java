@@ -207,7 +207,7 @@ public class AStarPathfinding {
         }
         return current.getGCost()+GCost;
     }
-
+    // draw the Node into the world, using the ShowNode method
     public static void drawNode(Node node, BlockState block, World world, Boolean draw) {
         BlockPos nodeLoc = new BlockPos(node.getLoc().getX(), 110, node.getLoc().getZ());
         NodeHandler.ShowNode(nodeLoc, world, draw, block);

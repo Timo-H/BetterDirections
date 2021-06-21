@@ -32,9 +32,10 @@ public class SetWaypointMessage {
     public static void handle(SetWaypointMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
+            // get the player
             ServerPlayerEntity player = context.getSender();
+            // add the waypoint
             WaypointHandler.addWaypoint(player, message.waypointName);
-
             // synchronize to the client
             WaypointSynchronisation.Synchronize(player, context);
         });

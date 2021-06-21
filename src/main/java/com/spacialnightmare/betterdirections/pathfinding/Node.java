@@ -21,7 +21,7 @@ public class Node {
         this.GCost = GCost;
         this.HCost = HCost;
     }
-
+    // Getter's and Setter's for the Node
     public BlockPos getLoc() {
         return loc;
     }

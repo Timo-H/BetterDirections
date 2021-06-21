@@ -40,30 +40,37 @@ public class ConfigManager {
         config.save();
         SPEC.setConfig(config);
     }
-    // How many nodes should be generated per chunk
+    // (SliderValue) How many nodes should be generated per chunk
     private final IntValue nodesPerChunkSlider;
-
+    // How many nodes should be generated per chunk
     private final IntValue nodesPerChunk;
-
+    // How many blocks are between the Nodes
     private final IntValue distanceBetweenNodes;
-
+    // (SliderValue) How large the radius for the visualization for chunkNodes is
     private final IntValue radiusChunkNodesSlider;
-
+    // How large the radius for the visualization for chunkNodes is
     private final IntValue radiusChunkNodes;
-
-    private final HashMap<Integer, Integer> nodesPerChunkMapF;
-
-    private final HashMap<Integer, Integer> nodesPerChunkMapI;
-
+    // HashMap that holds the values for the nodes per chunk
+    private final HashMap<Integer, Integer> nodesPerChunkMap;
+    // HashMap that holds the values for the distance between nodes
+    private final HashMap<Integer, Integer> distanceBetweenNodesMap;
+    // HashMap that holds the values for the radius for chunk nodes visualization
     private final HashMap<Integer, Integer> radiusChunkNodesMap;
-
+    // Boolean that can be toggled, to show the calculated path with the nodes
     private final BooleanValue showCalculatedNodes;
 
+    // initialize all the variables
     private ConfigManager(ForgeConfigSpec.Builder configSpecBuilder) {
+        // initialize the sliders, with a defaultValue, minimum, and maximum
         nodesPerChunkSlider = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.nodesperchunkslider.title")
                 .defineInRange("nodesperchunkslider", 2, 1, 3);
 
+        radiusChunkNodesSlider = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.radiuschunknodesslider.title")
+                .defineInRange("radiuschunknodesslider", 4, 1, 6);
+
+        // initialize the variables
         nodesPerChunk = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.nodesperchunk.title")
                 .defineInRange("nodesperchunk", 64, 16, 256);
@@ -71,10 +78,6 @@ public class ConfigManager {
         distanceBetweenNodes = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.distancebetweennodes.title")
                 .defineInRange("distancebetweennodes", 2, 1, 4);
-
-        radiusChunkNodesSlider = configSpecBuilder
-                .translation("gui." + BetterDirections.MOD_ID + ".configgui.radiuschunknodesslider.title")
-                .defineInRange("radiuschunknodesslider", 4, 1, 6);
 
         radiusChunkNodes = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.radiuschunknodes.title")
@@ -84,7 +87,9 @@ public class ConfigManager {
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.showcalculatednodes.title")
                 .define("showcalculatednodes", true);
 
+        // initialize the HashMap's and add values to them
         radiusChunkNodesMap = new HashMap<>();
+        // The first value is the slider Value, the second is the Radius Value
         radiusChunkNodesMap.put(0, 1);
         radiusChunkNodesMap.put(1, 3);
         radiusChunkNodesMap.put(2, 5);
@@ -92,17 +97,19 @@ public class ConfigManager {
         radiusChunkNodesMap.put(4, 9);
         radiusChunkNodesMap.put(5, 11);
 
-        nodesPerChunkMapF = new HashMap<>();
-        nodesPerChunkMapF.put(0, 16);
-        nodesPerChunkMapF.put(1, 64);
-        nodesPerChunkMapF.put(2, 256);
+        nodesPerChunkMap = new HashMap<>();
+        // The first value is the slider Value, the second is the Nodes per Chunk value
+        nodesPerChunkMap.put(0, 16);
+        nodesPerChunkMap.put(1, 64);
+        nodesPerChunkMap.put(2, 256);
 
-        nodesPerChunkMapI = new HashMap<>();
-        nodesPerChunkMapI.put(16, 4);
-        nodesPerChunkMapI.put(64, 2);
-        nodesPerChunkMapI.put(256, 1);
+        distanceBetweenNodesMap = new HashMap<>();
+        // The first value is the Nodes per Chunk, the second is the Distance between Nodes Value
+        distanceBetweenNodesMap.put(16, 4);
+        distanceBetweenNodesMap.put(64, 2);
+        distanceBetweenNodesMap.put(256, 1);
     }
-
+    // Getter's and Setter's for all the variables
     public static ConfigManager getInstance() {
         return INSTANCE;
     }
@@ -127,31 +134,36 @@ public class ConfigManager {
 
     public void changeNodesPerChunkSlider(int newValue) {
         nodesPerChunkSlider.set(newValue);
+        // when the slider value changes, also change the nodes per chunk
         changeNodesPerChunk(newValue);
     }
     public void changeNodesPerChunk(int slideValue) {
-        nodesPerChunk.set(nodesPerChunkMapF.get(slideValue));
-        changeDistanceBetweenNodes(nodesPerChunkMapF.get(slideValue));
+        // get and set the Value from the HashMap using the given value
+        nodesPerChunk.set(nodesPerChunkMap.get(slideValue));
+        // when the Nodes per chunk value changes, also change the distance between nodes
+        changeDistanceBetweenNodes(nodesPerChunkMap.get(slideValue));
     }
 
     public void changeDistanceBetweenNodes(int slideValue) {
-        distanceBetweenNodes.set(nodesPerChunkMapI.get(slideValue));
+        // get and set the Value from the HashMap using the given value
+        distanceBetweenNodes.set(distanceBetweenNodesMap.get(slideValue));
     }
 
     public void changeRadiusChunkNodesSlider(int newValue) {
         radiusChunkNodesSlider.set(newValue);
+        // when the slider value changes, also change the radius for chunk nodes visualization
         changeRadiusChunkNodes(newValue);
     }
 
     public void changeRadiusChunkNodes(int slideValue) {
+        // get and set the Value from the HashMap using the given value
         radiusChunkNodes.set(radiusChunkNodesMap.get(slideValue));
     }
 
     public void setShowCalculatedNodes(boolean newValue) { showCalculatedNodes.set(newValue); }
 
+    // Save the Config values
     public void save() {
         SPEC.save();
     }
-
 }
-

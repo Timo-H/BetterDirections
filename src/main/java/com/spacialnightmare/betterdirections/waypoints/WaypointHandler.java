@@ -2,7 +2,9 @@ package com.spacialnightmare.betterdirections.waypoints;
 
 import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.SyncronizeWaypointMessage;
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -59,17 +61,17 @@ public class WaypointHandler {
         });
     }
     // show a waypoint location
-    public static void showWaypoint(ServerPlayerEntity player, String waypoint) {
+    public static void showWaypoints(PlayerEntity player) {
         World world = player.getEntityWorld();
         player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(h -> {
-            // get current waypoint and waypoint name
+            // get current waypoints
             ArrayList<BlockPos> waypoints = h.getWaypoints();
-            ArrayList<String> waypointsNames = h.getWaypointsNames();
 
-            // set the give BlockPos to a Gold Block
-            world.setBlockState(waypoints.get(waypointsNames.indexOf(waypoint)), Blocks.GOLD_BLOCK.getDefaultState());
+            // set the BlockPos to Gold Blocks
+            for (BlockPos waypoint : waypoints) {
+                NodeHandler.ShowNode(waypoint.up(3), world, isVisibleWaypoints(), Blocks.GOLD_BLOCK.getDefaultState());
+            }
         });
-
     }
 
     // Synchronize player Waypoints

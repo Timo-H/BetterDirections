@@ -18,6 +18,7 @@
   "gui.betterdirections.waypoint_title": "Waypoints",
   "gui.betterdirections.waypoint": "Waypoints",
   "gui.betterdirections.exit": "Exit",
+  "gui.betterdirections.show": "Show/Hide",
 
   "gui.betterdirections.configgui.title": "Better Direction Settings",
   "gui.betterdirections.configgui.done": "Done",

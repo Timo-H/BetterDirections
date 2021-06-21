@@ -27,8 +27,11 @@ public class ModEvents {
     // action when a key is pressed
     @SubscribeEvent
     public static void onKeyPress(InputEvent.KeyInputEvent event) {
+        // get the Instance
         Minecraft mc = Minecraft.getInstance();
+        // if world is 'null' return
         if (mc.world == null) return;
+        // send the input and action to onInput()
         onInput(mc, event.getKey(), event.getAction());
     }
 
@@ -41,8 +44,8 @@ public class ModEvents {
             // if V is pressed
             player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
             // send a packet to the server containing a boolean to set the nodes Visible/Invisible
-            ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
             NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
+            ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
         // if there is no screen open & a keybind is pressed
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
             // if B is pressed
@@ -62,7 +65,9 @@ public class ModEvents {
             // if M is pressed
             if (WaypointHandler.isPathing()) {
                 player.sendStatusMessage(new TranslationTextComponent("message.toggle_path"), true);
+                // toggle the boolean 'visible'
                 AStarPathfinding.setVISIBLE(!AStarPathfinding.isVISIBLE());
+                // send a packet to the server, to toggle the Path
                 ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(AStarPathfinding.isVISIBLE()));
             }
         }
