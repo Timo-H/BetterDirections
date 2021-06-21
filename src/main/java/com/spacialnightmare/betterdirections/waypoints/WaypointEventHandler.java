@@ -1,13 +1,12 @@
 package com.spacialnightmare.betterdirections.waypoints;
 
 import com.spacialnightmare.betterdirections.BetterDirections;
-import com.spacialnightmare.betterdirections.network.ModNetwork;
-import com.spacialnightmare.betterdirections.network.message.SyncronizeWaypointMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,7 +34,7 @@ public class WaypointEventHandler {
         IWaypoints capability = event.getPlayer().getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
                 .orElseThrow(() -> new IllegalArgumentException("at login"));
         System.out.println(capability.getWaypointsNames());
-        synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+        WaypointHandler.synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                 (ServerPlayerEntity) event.getPlayer());
     }
     // copy the capability when a playerEntity is cloned (Death, Going from End to overworld)
@@ -51,29 +50,13 @@ public class WaypointEventHandler {
         waypoints.setWaypoints(oldWaypoints.getWaypoints());
         waypoints.setWaypointsNames(oldWaypoints.getWaypointsNames());
         // synchronize waypoints to the client
-        synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+        WaypointHandler.synchronizePlayerWaypoints(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                 (ServerPlayerEntity) event.getPlayer());
     }
 
-    // Synchronize player Waypoints
-    public void synchronizePlayerWaypoints(PacketDistributor.PacketTarget target, ServerPlayerEntity player) {
-        player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY).ifPresent(capability -> {
-            System.out.println(capability.getWaypointsNames());
-            if (capability.getWaypoints() != null) {
-                System.out.println("Old Capability: " + capability.getWaypointsNames());
-                // read the coordinates
-                int[] waypoints = new int[3 * capability.getWaypoints().size()];
-                int i = 0;
-                for (BlockPos waypoint : capability.getWaypoints()) {
-                    waypoints[i] = waypoint.getX();
-                    waypoints[i + 1] = waypoint.getY();
-                    waypoints[i + 2] = waypoint.getZ();
-                    i += 3;
-                }
-                // send a packet to the client with the current data
-                ModNetwork.CHANNEL.send(target, new SyncronizeWaypointMessage(waypoints, capability.getWaypointsNames()
-                        .toString()));
-            }
-        });
+    @SubscribeEvent
+    public void RenderGameOverlayEvent(RenderGameOverlayEvent.Post event) {
+        if (WaypointHandler.isVisibleWaypoints()) {
         }
+    }
 }

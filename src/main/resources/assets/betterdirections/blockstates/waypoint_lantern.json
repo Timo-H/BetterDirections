@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "betterdirections:block/waypoint_lantern" }
+  }
+}

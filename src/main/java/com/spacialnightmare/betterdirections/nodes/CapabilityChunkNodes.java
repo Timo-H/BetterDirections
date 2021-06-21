@@ -30,11 +30,13 @@ public class CapabilityChunkNodes {
         // write the data as NBT data and return it
         public INBT writeNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side) {
             CompoundNBT tag = new CompoundNBT();
-
-            for (int i = 0; i < CMI.nodesPerChunk(); i++) {
-                int [] node = {instance.getNodes().get(i).getX(), instance.getNodes().get(i).getY(),
-                        instance.getNodes().get(i).getZ()};
-                tag.putIntArray("node" + i, node);
+            // check if the total nodes in the chunk is the same as the nodePerChunk in the Config
+            if (instance.getNodes().size() == CMI.nodesPerChunk()) {
+                for (int i = 0; i < CMI.nodesPerChunk(); i++) {
+                    int[] node = {instance.getNodes().get(i).getX(), instance.getNodes().get(i).getY(),
+                            instance.getNodes().get(i).getZ()};
+                    tag.putIntArray("node" + i, node);
+                }
             }
             return tag;
         }
@@ -42,14 +44,19 @@ public class CapabilityChunkNodes {
         @Override
         // read the NBT data when an object is loaded, and sets the data for it
         public void readNBT(Capability<IChunkNodes> capability, IChunkNodes instance, Direction side, INBT nbt) {
-            ArrayList<BlockPos> nodes = new ArrayList<>();
-            for (int i = 0; i < CMI.nodesPerChunk(); i++) {
+            CompoundNBT data = (CompoundNBT) nbt;
+            if (data.size() == CMI.nodesPerChunk()) {
+                ArrayList<BlockPos> nodes = new ArrayList<>();
+                for (int i = 0; i < CMI.nodesPerChunk(); i++) {
 
-                int[] nodeArray = ((CompoundNBT) nbt).getIntArray("node" + i);
-                BlockPos node = new BlockPos(nodeArray[0], nodeArray[1], nodeArray[2]);
-                nodes.add(node);
+                    int[] nodeArray = data.getIntArray("node" + i);
+                    BlockPos node = new BlockPos(nodeArray[0], nodeArray[1], nodeArray[2]);
+                    nodes.add(node);
+                }
+                instance.setNodes(nodes);
+            } else {
+                instance.setNodes(null);
             }
-            instance.setNodes(nodes);
         }
     }
 }

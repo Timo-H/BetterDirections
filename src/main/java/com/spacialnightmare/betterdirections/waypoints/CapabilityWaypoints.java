@@ -35,7 +35,6 @@ public class CapabilityWaypoints {
 
                     int[] waypoint = {instance.getWaypoints().get(i).getX(), instance.getWaypoints().get(i).getY(),
                             instance.getWaypoints().get(i).getZ()};
-                    System.out.println(Arrays.toString(waypoint));
                     tag.putIntArray("waypoint" + i, waypoint);
                     tag.putString("waypointname" + i, instance.getWaypointsNames().get(i));
                 tag.putInt("totalwaypoints", instance.getWaypoints().size());

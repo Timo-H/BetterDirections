@@ -3,16 +3,22 @@ package com.spacialnightmare.betterdirections.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.spacialnightmare.betterdirections.BetterDirections;
 import com.spacialnightmare.betterdirections.util.ConfigManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.client.settings.BooleanOption;
 import net.minecraft.client.settings.SliderMultiplierOption;
+import net.minecraft.client.settings.SliderPercentageOption;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
+// ConfigScreen displayed when u press on the mod Config button
+// Used implementation from 'https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html'
 public class ConfigScreen extends Screen {
     // Distance from top of the screen to the Title
     private static final int TITLE_HEIGHT = 8;
@@ -32,15 +38,11 @@ public class ConfigScreen extends Screen {
     // Get the instance of the Config Manager
     private static final ConfigManager CMI = ConfigManager.getInstance();
 
-    // The parent screen of this screen
-    private final Screen parentScreen;
-
     // List of option rows shown on the screen
     private OptionsRowList optionsRowList;
 
-    public ConfigScreen(Screen parentScreen) {
+    public ConfigScreen() {
         super(new TranslationTextComponent("gui." + BetterDirections.MOD_ID + ".configgui.title"));
-        this.parentScreen = parentScreen;
     }
 
     @Override
@@ -49,15 +51,31 @@ public class ConfigScreen extends Screen {
         this.optionsRowList = new OptionsRowList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT,
                 this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 
-        this.optionsRowList.addOption(new SliderMultiplierOption("gui." + BetterDirections.MOD_ID
+        this.optionsRowList.addOption(new SliderPercentageOption("gui." + BetterDirections.MOD_ID
                 + ".configgui.nodesperchunk.title",
-                16, 256,
-                4,
-                        unused -> (double) CMI.nodesPerChunk(),
-                (unused, newValue) -> CMI.changeNodesPerChunk(newValue.intValue()),
+                0.0, 2.0,
+                1.0F,
+                        unused -> (double) CMI.nodesPerChunkSlider(),
+                (unused, newValue) -> CMI.changeNodesPerChunkSlider(newValue.intValue()),
 
-                (gs, option) -> new StringTextComponent("Nodes generated per chunk: " + (int) option.get(gs)
+                (gs, option) -> new StringTextComponent("Nodes generated per chunk: " + CMI.nodesPerChunk())
+        ));
+
+        this.optionsRowList.addOption(new SliderPercentageOption("gui." + BetterDirections.MOD_ID
+                + ".configgui.radiusnodes.title",
+                0.0, 5.0,
+                1.0F,
+                unused -> (double) CMI.radiusChunkNodesSlider(),
+                (unused, newValue) -> CMI.changeRadiusChunkNodesSlider(newValue.intValue()),
+
+                (gs, option) -> new StringTextComponent("Radius for Nodes loaded: " + CMI.radiusChunkNodes()
                 )
+        ));
+
+        this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
+                ".configgui.showcnodes.title",
+                unused -> CMI.showCalculatedNodes(),
+                (unused, newValue) -> CMI.setShowCalculatedNodes(newValue)
         ));
 
         // Add the options row list as this screen's child
@@ -65,7 +83,10 @@ public class ConfigScreen extends Screen {
         // Add the "Done" button
         this.addButton(new Button((this.width - BUTTON_WIDTH) / 2, this.height - DONE_BUTTON_TOP_OFFSET,
                 BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("gui." + BetterDirections.MOD_ID +
-                ".configgui.done"), button -> this.onClose())
+                ".configgui.done"), (buttonAction) -> {
+                    CMI.save();
+                    this.closeScreen();
+                })
         );
     }
 
@@ -81,8 +102,9 @@ public class ConfigScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
-    @Override
-    public void onClose() {
-        CMI.save();
+    private enum ButtonAction implements Button.IPressable {
+        ;
+        @Override
+        public void onPress(Button button) { }
     }
 }

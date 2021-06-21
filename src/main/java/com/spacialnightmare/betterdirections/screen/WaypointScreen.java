@@ -6,6 +6,8 @@ import com.spacialnightmare.betterdirections.network.ModNetwork;
 import com.spacialnightmare.betterdirections.network.message.CreatePathMessage;
 import com.spacialnightmare.betterdirections.network.message.TogglePathMessage;
 import com.spacialnightmare.betterdirections.network.message.RemoveWaypointMesage;
+import com.spacialnightmare.betterdirections.nodes.NodeHandler;
+import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.CapabilityWaypoints;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.client.Minecraft;
@@ -196,26 +198,22 @@ public class WaypointScreen extends Screen {
         // action taken when the button is pressed
         @Override
         public void onPress() {
-            World world = Minecraft.getInstance().world;
             Minecraft.getInstance().player.getCapability(CapabilityWaypoints.WAYPOINTS_CAPABILITY)
                     .ifPresent(capability -> {
-                        // checks if the path button pressed, is the same one that is currently active, and if so,
-                        // switch the boolean value. Also switches the boolean if there was no previous path active
-                        if (capability.getWaypointsNames().indexOf(WaypointHandler.getIsPathingTo()) == waypointIndex ||
-                        WaypointHandler.getIsPathingTo() == null || WaypointHandler.getIsPathingTo().equals("")) {
-                            WaypointHandler.setPathing(!WaypointHandler.isPathing());
-                        }
                         // check if there is a path active
+                        WaypointHandler.setPathing(!WaypointHandler.isPathing());
                         if (WaypointHandler.isPathing()) {
                             // set the PathingTo String to the name of the destination waypoint
                             WaypointHandler.setIsPathingTo(capability.getWaypointsNames().get(waypointIndex));
                             // send a packet to the server to find the best route
                             ModNetwork.CHANNEL.sendToServer(new CreatePathMessage(waypointIndex));
+                            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(true));
                         } else {
-                            // set the Path to null
-                            WaypointHandler.setPath(null);
+                            if (!AStarPathfinding.isVISIBLE()) {
+                                ModNetwork.CHANNEL.sendToServer(new TogglePathMessage(false));
+                            }
+
                             WaypointHandler.setIsPathingTo("");
-                            ModNetwork.CHANNEL.sendToServer(new TogglePathMessage());
                         }
 
                 });

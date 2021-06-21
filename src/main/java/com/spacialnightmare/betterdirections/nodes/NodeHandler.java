@@ -48,13 +48,12 @@ public class NodeHandler {
     // Create the nodes for the given chunk, the amount of nodes created depends on the NODES_PER_CHUNK Integer in the config
     public static void CreateChunkNodes(Chunk chunk, World world) {
         // Determine distance between nodes depending on the NODES_PER_CHUNK
-        int distanceBetweenNodes = CMI.distanceBetweenNodes();
         ArrayList<BlockPos> nodes = new ArrayList<>();
 
         // creating rows of nodes
-        for (int i = 0; i < 16; i += distanceBetweenNodes) {
+        for (int i = 0; i < CMI.nodesPerChunk(); i += CMI.distanceBetweenNodes()) {
             // creating nodes
-            for (int j = 0; j < 16; j += distanceBetweenNodes) {
+            for (int j = 0; j < CMI.nodesPerChunk(); j += CMI.distanceBetweenNodes()) {
                 // Storing the coords in a BlockPos variable
                 int x = chunk.getPos().getXStart() + i;
                 int y = chunk.getTopBlockY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, chunk.getPos().getXStart() + i,
@@ -84,7 +83,7 @@ public class NodeHandler {
     public static void ShowNode(BlockPos pos, World world, Boolean visible, BlockState block) {
         if (visible) {
             // replace block with given block at the given BlockPos if it is air
-            if (world.isAirBlock(pos)) {
+            if (world.isAirBlock(pos) || world.getBlockState(pos) == Blocks.GREEN_WOOL.getDefaultState()) {
                 world.setBlockState(pos, block);
             }
         } else {

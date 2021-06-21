@@ -1,6 +1,8 @@
 {
   "item.betterdirections.wayward_compass": "Wayward Compass",
 
+  "block.betterdirections.waypoint_lantern": "Waypoint Lantern",
+
   "message.toggle_nodes": "Toggle Nodes Visibility",
   "message.toggle_path": "Toggle Path Visibility",
 
@@ -19,5 +21,6 @@
 
   "gui.betterdirections.configgui.title": "Better Direction Settings",
   "gui.betterdirections.configgui.done": "Done",
-  "gui.betterdirections.configgui.nodesperchunk.title": "Nodes generated per chunk"
+  "gui.betterdirections.configgui.nodesperchunk.title": "Nodes generated per chunk",
+  "gui.betterdirections.configgui.showcnodes.title": "Show Calculated path"
 }

@@ -48,7 +48,7 @@ public class AStarPathfinding {
             // for every neighbor of the current node
             ArrayList<Node> neighbours = getNeighbours(current, world, endPos);
             for (Node neighbor : neighbours) {
-                CheckNeighbor(neighbor, current);
+                CheckNeighbor(neighbor, current, world);
             }
         }
     }
@@ -74,7 +74,7 @@ public class AStarPathfinding {
         return false;
     }
 
-    public static void CheckNeighbor(Node neighbor, Node current) {
+    public static void CheckNeighbor(Node neighbor, Node current, World world) {
         // if neighbor is not in CLOSED
         if (!CLOSED.contains(neighbor)) {
             // if neighbor is in OPEN
@@ -151,7 +151,6 @@ public class AStarPathfinding {
 
                 // get the GCost for the neighbor
                 int GCost = neighborGCost(current, x, z, distanceBetweenNodes, matchingNode, world);
-                System.out.println("GCost: " + GCost);
                 // add the node to the Neighbors list
                 Node newNode = new Node(matchingNode, GCost, Heuristic(matchingNode, endPos));
                 // add the newNode to the neighbours ArrayList
@@ -194,13 +193,17 @@ public class AStarPathfinding {
             GCost += 10;
         }
 
-        // add to the GCost the Height Difference * 5, if it is 2 or heigher
+        // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher going uphill
         if (matchingNode.getY() - current.getLoc().getY() > 1) {
-            GCost += (Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 20;
+            GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 40) / CMI.distanceBetweenNodes();
         }
-        // if the top block is water, add 15 to the GCost
+        // add to the GCost the ((Height Difference - 3) * 40) / distance between nodes, if it is 4 or higher going downhill
+        if (current.getLoc().getY() - matchingNode.getY() > 3) {
+            GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY())-3) * 40) / CMI.distanceBetweenNodes();
+        }
+        // if the top block is water, add 10 to the GCost
         if (world.getBlockState(matchingNode) == Blocks.WATER.getDefaultState()) {
-            GCost += 10;
+            GCost += 40;
         }
         return current.getGCost()+GCost;
     }

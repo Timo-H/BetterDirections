@@ -1,5 +1,6 @@
 package com.spacialnightmare.betterdirections;
 
+import com.spacialnightmare.betterdirections.block.ModBlocks;
 import com.spacialnightmare.betterdirections.events.ModEvents;
 import com.spacialnightmare.betterdirections.item.ModItems;
 import com.spacialnightmare.betterdirections.network.ModNetwork;
@@ -52,7 +53,7 @@ public class BetterDirections
         // Register the ConfigScreen
         ModLoadingContext.get().registerExtensionPoint(
                 ExtensionPoint.CONFIGGUIFACTORY,
-                () -> (mc, screen) -> new ConfigScreen(screen)
+                () -> (mc, screen) -> new ConfigScreen()
         );
         // Initiate the network for the mod
         ModNetwork.init();
@@ -65,8 +66,9 @@ public class BetterDirections
         // Inits the registration of the mod additions
         Registration.init();
 
-        // Register the items added by the mod
+        // Register the Items and Blocks added by the mod
         ModItems.register();
+        ModBlocks.register();
 
         // Register the events added by the mod
         MinecraftForge.EVENT_BUS.register(new WaypointEventHandler());

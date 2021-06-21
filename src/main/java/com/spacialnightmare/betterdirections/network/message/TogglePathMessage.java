@@ -1,5 +1,6 @@
 package com.spacialnightmare.betterdirections.network.message;
 
+import com.spacialnightmare.betterdirections.block.ModBlocks;
 import com.spacialnightmare.betterdirections.nodes.NodeHandler;
 import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.pathfinding.Node;
@@ -10,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class TogglePathMessage {
@@ -35,6 +37,12 @@ public class TogglePathMessage {
         context.enqueueWork(() -> {
             // get world
             World world = context.getSender().getEntityWorld();
+            ArrayList<BlockPos> path = WaypointHandler.getPath();
+            // for every node in the path, set/remove a waypoint lantern 2 blocks up
+            AStarPathfinding.setVISIBLE(message.visible);
+            for (BlockPos node : path) {
+                NodeHandler.ShowNode(node.up(6), world, message.visible, ModBlocks.WAYPOINT_LANTERN.get().getDefaultState());
+            }
         });
     }
 }
