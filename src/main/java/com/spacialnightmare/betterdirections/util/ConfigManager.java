@@ -52,6 +52,8 @@ public class ConfigManager {
     private final BooleanValue ignoreHeightDifferenceDown;
     // Boolean that can be toggled, to ignore the height difference going up when calculating a path
     private final BooleanValue ignoreHeightDifferenceUp;
+    // Boolean that can be toggled, to allow height differences
+    private final BooleanValue allowHeightDifference;
 
     // initialize all the variables
     private ConfigManager(ForgeConfigSpec.Builder configSpecBuilder) {
@@ -80,6 +82,10 @@ public class ConfigManager {
         ignoreHeightDifferenceUp = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.ignoreheightdifferenceup.title")
                 .define("ignoreheightdifferenceup", false);
+
+        allowHeightDifference = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.allowheightdifference.title")
+                .define("allowheightdifference", true);
 
         nodesPerChunkMap = new HashMap<>();
         // The first value is the slider Value, the second is the Nodes per Chunk value
@@ -116,6 +122,8 @@ public class ConfigManager {
 
     public boolean IgnoreHeightDifferenceUp() { return ignoreHeightDifferenceUp.get(); }
 
+    public boolean AllowHeightDifference() { return allowHeightDifference.get(); }
+
     public void changeNodesPerChunkSlider(int newValue) {
         nodesPerChunkSlider.set(newValue);
         // when the slider value changes, also change the nodes per chunk
@@ -138,6 +146,8 @@ public class ConfigManager {
     public void changeIgnoreHeightDifferenceDown(boolean newValue) { ignoreHeightDifferenceDown.set(newValue); }
 
     public void changeIgnoreHeightDifferenceUp(boolean newValue) { ignoreHeightDifferenceUp.set(newValue); }
+
+    public void changeAllowheightDifference(boolean newValue) { allowHeightDifference.set(newValue); }
 
     // Save the Config values
     public void save() {

@@ -25,5 +25,6 @@
   "gui.betterdirections.configgui.nodesperchunk.title": "Nodes generated per chunk",
   "gui.betterdirections.configgui.ignorewater.title": "Ignore water when calculating path",
   "gui.betterdirections.configgui.ignoreheightdifferencedown.title": "Ignore height difference going down",
-  "gui.betterdirections.configgui.ignoreheightdifferenceup.title": "Ignore height difference going up"
+  "gui.betterdirections.configgui.ignoreheightdifferenceup.title": "Ignore height difference going up",
+  "gui.betterdirections.configgui.allowheightdifference.title": "Allow height difference"
 }

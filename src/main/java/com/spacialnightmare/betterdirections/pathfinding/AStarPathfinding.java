@@ -115,9 +115,11 @@ public class AStarPathfinding {
             heuristic += diagonalStep * ZDifference;
             heuristic += standardStep * (XDifference - ZDifference);
         }
-        // add a value to the heuristic based on the height difference
-        if (YDifference > 1) {
-            heuristic += YDifference*5;
+        // add a value to the heuristic based on the height difference (optional)
+        if (CMI.AllowHeightDifference()) {
+            if (YDifference > 1) {
+                heuristic += YDifference * 5;
+            }
         }
         return heuristic;
     }
@@ -155,8 +157,16 @@ public class AStarPathfinding {
                 Node newNode = new Node(matchingNode, GCost, Heuristic(matchingNode, endPos));
                 // add the newNode to the neighbours ArrayList
                 // if it doesnt have the same coordinates as the current node
-                if (!newNode.equals(current)) {
-                    neighbours.add(newNode);
+                if (CMI.AllowHeightDifference()) {
+                    if (!newNode.equals(current)) {
+                        neighbours.add(newNode);
+                    }
+                } else {
+                    if (newNode.getLoc().getY() == current.getLoc().getY()) {
+                        if (!newNode.equals(current)) {
+                            neighbours.add(newNode);
+                        }
+                    }
                 }
             }
         }
@@ -192,19 +202,21 @@ public class AStarPathfinding {
             // GCost for directly adjacent neighbors
             GCost += 10;
         }
-
-        // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher
-        // going uphill (optional)
-        if (!CMI.IgnoreHeightDifferenceUp()) {
-            if (matchingNode.getY() - current.getLoc().getY() > 1) {
-                GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 1) * 40) / CMI.distanceBetweenNodes();
+        // add a value to G-Cost based on the height difference (optional)
+        if (CMI.AllowHeightDifference()) {
+            // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher
+            // going uphill (optional)
+            if (!CMI.IgnoreHeightDifferenceUp()) {
+                if (matchingNode.getY() - current.getLoc().getY() > 1) {
+                    GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 1) * 40) / CMI.distanceBetweenNodes();
+                }
             }
-        }
-        // add to the GCost the ((Height Difference - 3) * 40) / distance between nodes, if it is 4 or higher
-        // going downhill (optional)
-        if (!CMI.IgnoreHeightDifferenceDown()) {
-            if (current.getLoc().getY() - matchingNode.getY() > 3) {
-                GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 3) * 40) / CMI.distanceBetweenNodes();
+            // add to the GCost the ((Height Difference - 3) * 40) / distance between nodes, if it is 4 or higher
+            // going downhill (optional)
+            if (!CMI.IgnoreHeightDifferenceDown()) {
+                if (current.getLoc().getY() - matchingNode.getY() > 3) {
+                    GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 3) * 40) / CMI.distanceBetweenNodes();
+                }
             }
         }
         // if the top block is water, add 40 to the GCost (Optional)

@@ -81,6 +81,14 @@ public class ConfigScreen extends Screen {
                 (unused, newValue) -> CMI.changeIgnoreHeightDifferenceUp(newValue)
         ));
 
+        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle if the
+        // algorithm takes the height difference going up into account when calculating a path
+        this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
+                ".configgui.allowheightdifference.title",
+                unused -> CMI.AllowHeightDifference(),
+                (unused, newValue) -> CMI.changeAllowheightDifference(newValue)
+        ));
+
         // Add the options row list as this screen's child
         this.children.add(this.optionsRowList);
         // Add the "Done" button
