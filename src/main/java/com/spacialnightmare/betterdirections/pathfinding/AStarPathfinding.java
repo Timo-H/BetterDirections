@@ -163,9 +163,16 @@ public class AStarPathfinding {
                     }
                 } else {
                     // if maze mode is on, check if height is the same
-                    if (newNode.getLoc().getY() == current.getLoc().getY() &&
-                        !newNode.equals(current)) {
+                    if (newNode.getLoc().getY() == current.getLoc().getY()) {
+                        // if node is not diagonal
+                        if (!(Math.abs(x - current.getLoc().getX()) == distanceBetweenNodes &&
+                                Math.abs(z - current.getLoc().getZ()) == distanceBetweenNodes)) {
+                            // if node is not the current
+                            if (!newNode.equals(current)) {
+                                // add it to the list
                                 neighbours.add(newNode);
+                            }
+                        }
                     }
                 }
             }
