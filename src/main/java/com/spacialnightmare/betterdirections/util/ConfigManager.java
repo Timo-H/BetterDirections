@@ -15,10 +15,6 @@ import java.util.HashMap;
 // Configuration class
 // Used implementation from 'https://leo3418.github.io/2021/03/31/forge-mod-config-screen-1-16.html'
 public class ConfigManager {
-    // Default width from left edge of window to the left edge of HudGui
-    private static final int DEFAULT_HUD_X = 2;
-    // Default width from top edge of window to the top edge of HudGui
-    private static final int DEFAULT_HUD_Y = 2;
     // only instance of this class
     private static final ConfigManager INSTANCE;
     // the ForgeConfigsSpec instance for this mod's configuration
@@ -46,18 +42,16 @@ public class ConfigManager {
     private final IntValue nodesPerChunk;
     // How many blocks are between the Nodes
     private final IntValue distanceBetweenNodes;
-    // (SliderValue) How large the radius for the visualization for chunkNodes is
-    private final IntValue radiusChunkNodesSlider;
-    // How large the radius for the visualization for chunkNodes is
-    private final IntValue radiusChunkNodes;
     // HashMap that holds the values for the nodes per chunk
     private final HashMap<Integer, Integer> nodesPerChunkMap;
     // HashMap that holds the values for the distance between nodes
     private final HashMap<Integer, Integer> distanceBetweenNodesMap;
-    // HashMap that holds the values for the radius for chunk nodes visualization
-    private final HashMap<Integer, Integer> radiusChunkNodesMap;
-    // Boolean that can be toggled, to show the calculated path with the nodes
-    private final BooleanValue showCalculatedNodes;
+    // Boolean that can be toggled, to ignore the water when calculating a path
+    private final BooleanValue ignoreWater;
+    // Boolean that can be toggled, to ignore the height difference going down when calculating a path
+    private final BooleanValue ignoreHeightDifferenceDown;
+    // Boolean that can be toggled, to ignore the height difference going up when calculating a path
+    private final BooleanValue ignoreHeightDifferenceUp;
 
     // initialize all the variables
     private ConfigManager(ForgeConfigSpec.Builder configSpecBuilder) {
@@ -65,10 +59,6 @@ public class ConfigManager {
         nodesPerChunkSlider = configSpecBuilder
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.nodesperchunkslider.title")
                 .defineInRange("nodesperchunkslider", 2, 1, 3);
-
-        radiusChunkNodesSlider = configSpecBuilder
-                .translation("gui." + BetterDirections.MOD_ID + ".configgui.radiuschunknodesslider.title")
-                .defineInRange("radiuschunknodesslider", 4, 1, 6);
 
         // initialize the variables
         nodesPerChunk = configSpecBuilder
@@ -79,23 +69,17 @@ public class ConfigManager {
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.distancebetweennodes.title")
                 .defineInRange("distancebetweennodes", 2, 1, 4);
 
-        radiusChunkNodes = configSpecBuilder
-                .translation("gui." + BetterDirections.MOD_ID + ".configgui.radiuschunknodes.title")
-                .defineInRange("radiuschunkcodes", 7, 1, 12);
+        ignoreWater = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.ignorewater.title")
+                .define("ignorewater", false);
 
-        showCalculatedNodes = configSpecBuilder
-                .translation("gui." + BetterDirections.MOD_ID + ".configgui.showcalculatednodes.title")
-                .define("showcalculatednodes", true);
+        ignoreHeightDifferenceDown = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.ignoreheightdifferencedown.title")
+                .define("ignoreheightdifferencedown", false);
 
-        // initialize the HashMap's and add values to them
-        radiusChunkNodesMap = new HashMap<>();
-        // The first value is the slider Value, the second is the Radius Value
-        radiusChunkNodesMap.put(0, 1);
-        radiusChunkNodesMap.put(1, 3);
-        radiusChunkNodesMap.put(2, 5);
-        radiusChunkNodesMap.put(3, 7);
-        radiusChunkNodesMap.put(4, 9);
-        radiusChunkNodesMap.put(5, 11);
+        ignoreHeightDifferenceUp = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.ignoreheightdifferenceup.title")
+                .define("ignoreheightdifferenceup", false);
 
         nodesPerChunkMap = new HashMap<>();
         // The first value is the slider Value, the second is the Nodes per Chunk value
@@ -126,11 +110,11 @@ public class ConfigManager {
         return distanceBetweenNodes.get();
     }
 
-    public int radiusChunkNodesSlider() { return radiusChunkNodesSlider.get(); }
+    public boolean ignoreWater() { return ignoreWater.get(); }
 
-    public int radiusChunkNodes() { return radiusChunkNodes.get(); }
+    public boolean IgnoreHeightDifferenceDown() { return ignoreHeightDifferenceDown.get(); }
 
-    public boolean showCalculatedNodes() { return showCalculatedNodes.get(); }
+    public boolean IgnoreHeightDifferenceUp() { return ignoreHeightDifferenceUp.get(); }
 
     public void changeNodesPerChunkSlider(int newValue) {
         nodesPerChunkSlider.set(newValue);
@@ -149,18 +133,11 @@ public class ConfigManager {
         distanceBetweenNodes.set(distanceBetweenNodesMap.get(slideValue));
     }
 
-    public void changeRadiusChunkNodesSlider(int newValue) {
-        radiusChunkNodesSlider.set(newValue);
-        // when the slider value changes, also change the radius for chunk nodes visualization
-        changeRadiusChunkNodes(newValue);
-    }
+    public void changeIgnoreWater(boolean newValue) { ignoreWater.set(newValue); }
 
-    public void changeRadiusChunkNodes(int slideValue) {
-        // get and set the Value from the HashMap using the given value
-        radiusChunkNodes.set(radiusChunkNodesMap.get(slideValue));
-    }
+    public void changeIgnoreHeightDifferenceDown(boolean newValue) { ignoreHeightDifferenceDown.set(newValue); }
 
-    public void setShowCalculatedNodes(boolean newValue) { showCalculatedNodes.set(newValue); }
+    public void changeIgnoreHeightDifferenceUp(boolean newValue) { ignoreHeightDifferenceUp.set(newValue); }
 
     // Save the Config values
     public void save() {

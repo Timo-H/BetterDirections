@@ -57,24 +57,28 @@ public class ConfigScreen extends Screen {
 
                 (gs, option) -> new StringTextComponent("Nodes generated per chunk: " + CMI.nodesPerChunk())
         ));
-        // Add a slideBar to the optionsRowList, with this slideBar you will be able to change the
-        // radiusChunkNodes Value
-        this.optionsRowList.addOption(new SliderPercentageOption("gui." + BetterDirections.MOD_ID
-                + ".configgui.radiusnodes.title",
-                0.0, 5.0,
-                1.0F,
-                unused -> (double) CMI.radiusChunkNodesSlider(),
-                (unused, newValue) -> CMI.changeRadiusChunkNodesSlider(newValue.intValue()),
-
-                (gs, option) -> new StringTextComponent("Radius for Nodes loaded: " + CMI.radiusChunkNodes()
-                )
-        ));
-        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle the
-        // ShowCalculatedNodes
+        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle if the
+        // algorithm takes water into account when calculating a path
         this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
-                ".configgui.showcnodes.title",
-                unused -> CMI.showCalculatedNodes(),
-                (unused, newValue) -> CMI.setShowCalculatedNodes(newValue)
+                ".configgui.ignorewater.title",
+                unused -> CMI.ignoreWater(),
+                (unused, newValue) -> CMI.changeIgnoreWater(newValue)
+        ));
+
+        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle if the
+        // algorithm takes the height difference going down into account when calculating a path
+        this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
+                ".configgui.ignoreheightdifferencedown.title",
+                unused -> CMI.IgnoreHeightDifferenceDown(),
+                (unused, newValue) -> CMI.changeIgnoreHeightDifferenceDown(newValue)
+        ));
+
+        // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle if the
+        // algorithm takes the height difference going up into account when calculating a path
+        this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
+                ".configgui.ignoreheightdifferenceup.title",
+                unused -> CMI.IgnoreHeightDifferenceUp(),
+                (unused, newValue) -> CMI.changeIgnoreHeightDifferenceUp(newValue)
         ));
 
         // Add the options row list as this screen's child

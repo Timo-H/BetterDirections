@@ -42,10 +42,12 @@ public class ModEvents {
         // if there is no screen open & a keybind is pressed
         if (mc.currentScreen == null && KeyBindsInit.showNodes.isPressed()) {
             // if V is pressed
-            player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
-            // send a packet to the server containing a boolean to set the nodes Visible/Invisible
-            NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
-            ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
+            if (WaypointHandler.isPathing()) {
+                player.sendStatusMessage(new TranslationTextComponent("message.toggle_nodes"), true);
+                // send a packet to the server containing a boolean to set the nodes Visible/Invisible
+                NodeHandler.setNodeVisibility(!NodeHandler.getNodeVisibility());
+                ModNetwork.CHANNEL.sendToServer(new ShowNodesMessage(NodeHandler.getNodeVisibility()));
+            }
         // if there is no screen open & a keybind is pressed
         } else if (mc.currentScreen == null && KeyBindsInit.setWaypoint.isPressed()) {
             // if B is pressed

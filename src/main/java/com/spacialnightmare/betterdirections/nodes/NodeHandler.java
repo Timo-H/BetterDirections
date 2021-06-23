@@ -18,13 +18,13 @@ public class NodeHandler {
     // Boolean that keeps track of the visibility of the nodes
     public static Boolean NodeVisibility = false;
     // Initial Chunk an action was activated
-    public static Chunk midChunk;
+    public static int[] midChunk;
 
     public static Boolean getNodeVisibility() {
         return NodeVisibility;
     }
 
-    public static Chunk getMidChunk() {
+    public static int[] getMidChunk() {
         return midChunk;
     }
 
@@ -32,8 +32,8 @@ public class NodeHandler {
         NodeVisibility = nodeVisibility;
     }
 
-    public static void setMidChunk(Chunk midChunk) {
-        NodeHandler.midChunk = midChunk;
+    public static void setMidChunk(int[] chunk) {
+        NodeHandler.midChunk = chunk;
     }
 
     // check if there are already nodes created in the chunk, and if so, checks if the amount of nodes is the same as
@@ -51,14 +51,19 @@ public class NodeHandler {
         ArrayList<BlockPos> nodes = new ArrayList<>();
 
         // creating rows of nodes
-        for (int i = 0; i < CMI.nodesPerChunk(); i += CMI.distanceBetweenNodes()) {
+        for (int i = 0; i < Math.sqrt(CMI.nodesPerChunk()); i++) {
             // creating nodes
-            for (int j = 0; j < CMI.nodesPerChunk(); j += CMI.distanceBetweenNodes()) {
+            for (int j = 0; j < Math.sqrt(CMI.nodesPerChunk()); j++) {
                 // Storing the coords in a BlockPos variable
-                int x = chunk.getPos().getXStart() + i;
-                int y = chunk.getTopBlockY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, chunk.getPos().getXStart() + i,
+                int x = chunk.getPos().getXStart() + (i * CMI.distanceBetweenNodes());
+                int y = chunk.getTopBlockY(Heightmap.Type.WORLD_SURFACE, chunk.getPos().getXStart() + i,
                         chunk.getPos().getZStart() + j);
-                int z = chunk.getPos().getZStart() + j;
+                int z = chunk.getPos().getZStart() + (j * CMI.distanceBetweenNodes());
+
+                while (chunk.getBlockState(new BlockPos(x, y, z)) == Blocks.OAK_LEAVES.getDefaultState() &&
+                chunk.getBlockState(new BlockPos(x, y, z)) == Blocks.AIR.getDefaultState()) {
+                    y--;
+                }
 
                 BlockPos node = new BlockPos(x, y, z);
                 nodes.add(node);

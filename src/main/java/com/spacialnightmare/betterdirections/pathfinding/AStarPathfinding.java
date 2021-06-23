@@ -193,17 +193,25 @@ public class AStarPathfinding {
             GCost += 10;
         }
 
-        // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher going uphill
-        if (matchingNode.getY() - current.getLoc().getY() > 1) {
-            GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY())-1) * 40) / CMI.distanceBetweenNodes();
+        // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher
+        // going uphill (optional)
+        if (!CMI.IgnoreHeightDifferenceUp()) {
+            if (matchingNode.getY() - current.getLoc().getY() > 1) {
+                GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 1) * 40) / CMI.distanceBetweenNodes();
+            }
         }
-        // add to the GCost the ((Height Difference - 3) * 40) / distance between nodes, if it is 4 or higher going downhill
-        if (current.getLoc().getY() - matchingNode.getY() > 3) {
-            GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY())-3) * 40) / CMI.distanceBetweenNodes();
+        // add to the GCost the ((Height Difference - 3) * 40) / distance between nodes, if it is 4 or higher
+        // going downhill (optional)
+        if (!CMI.IgnoreHeightDifferenceDown()) {
+            if (current.getLoc().getY() - matchingNode.getY() > 3) {
+                GCost += ((Math.abs(matchingNode.getY() - current.getLoc().getY()) - 3) * 40) / CMI.distanceBetweenNodes();
+            }
         }
-        // if the top block is water, add 10 to the GCost
-        if (world.getBlockState(matchingNode) == Blocks.WATER.getDefaultState()) {
-            GCost += 40;
+        // if the top block is water, add 40 to the GCost (Optional)
+        if (!CMI.ignoreWater()) {
+            if (world.getBlockState(matchingNode) == Blocks.WATER.getDefaultState()) {
+                GCost += 40;
+            }
         }
         return current.getGCost()+GCost;
     }

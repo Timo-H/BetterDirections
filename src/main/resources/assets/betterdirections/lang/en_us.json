@@ -8,7 +8,7 @@
 
   "key.category.betterdirections": "Better Directions",
 
-  "key.betterdirections.show_nodes": "Show Nodes",
+  "key.betterdirections.show_nodes": "Show Calculated nodes",
   "key.betterdirections.set_waypoint": "Set Waypoint",
   "key.betterdirections.see_waypoints": "See Waypoints",
   "key.betterdirections.toggle_path": "Toggle Path",
@@ -23,5 +23,7 @@
   "gui.betterdirections.configgui.title": "Better Direction Settings",
   "gui.betterdirections.configgui.done": "Done",
   "gui.betterdirections.configgui.nodesperchunk.title": "Nodes generated per chunk",
-  "gui.betterdirections.configgui.showcnodes.title": "Show Calculated path"
+  "gui.betterdirections.configgui.ignorewater.title": "Ignore water when calculating path",
+  "gui.betterdirections.configgui.ignoreheightdifferencedown.title": "Ignore height difference going down",
+  "gui.betterdirections.configgui.ignoreheightdifferenceup.title": "Ignore height difference going up"
 }
