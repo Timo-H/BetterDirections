@@ -53,7 +53,7 @@ public class ConfigManager {
     // Boolean that can be toggled, to ignore the height difference going up when calculating a path
     private final BooleanValue ignoreHeightDifferenceUp;
     // Boolean that can be toggled, to allow height differences
-    private final BooleanValue allowHeightDifference;
+    private final BooleanValue mazeMode;
 
     // initialize all the variables
     private ConfigManager(ForgeConfigSpec.Builder configSpecBuilder) {
@@ -83,9 +83,9 @@ public class ConfigManager {
                 .translation("gui." + BetterDirections.MOD_ID + ".configgui.ignoreheightdifferenceup.title")
                 .define("ignoreheightdifferenceup", false);
 
-        allowHeightDifference = configSpecBuilder
-                .translation("gui." + BetterDirections.MOD_ID + ".configgui.allowheightdifference.title")
-                .define("allowheightdifference", true);
+        mazeMode = configSpecBuilder
+                .translation("gui." + BetterDirections.MOD_ID + ".configgui.mazemode.title")
+                .define("mazemode", false);
 
         nodesPerChunkMap = new HashMap<>();
         // The first value is the slider Value, the second is the Nodes per Chunk value
@@ -122,7 +122,7 @@ public class ConfigManager {
 
     public boolean IgnoreHeightDifferenceUp() { return ignoreHeightDifferenceUp.get(); }
 
-    public boolean AllowHeightDifference() { return allowHeightDifference.get(); }
+    public boolean MazeMode() { return mazeMode.get(); }
 
     public void changeNodesPerChunkSlider(int newValue) {
         nodesPerChunkSlider.set(newValue);
@@ -147,7 +147,7 @@ public class ConfigManager {
 
     public void changeIgnoreHeightDifferenceUp(boolean newValue) { ignoreHeightDifferenceUp.set(newValue); }
 
-    public void changeAllowheightDifference(boolean newValue) { allowHeightDifference.set(newValue); }
+    public void changeMazeMode(boolean newValue) { mazeMode.set(newValue); }
 
     // Save the Config values
     public void save() {

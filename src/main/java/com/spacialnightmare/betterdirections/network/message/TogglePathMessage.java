@@ -6,6 +6,7 @@ import com.spacialnightmare.betterdirections.pathfinding.AStarPathfinding;
 import com.spacialnightmare.betterdirections.waypoints.WaypointHandler;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -35,11 +36,16 @@ public class TogglePathMessage {
         context.enqueueWork(() -> {
             // get world
             World world = context.getSender().getEntityWorld();
-            ArrayList<BlockPos> path = WaypointHandler.getPath();
-            // for every node in the path, set/remove a waypoint lantern 2 blocks up
-            AStarPathfinding.setVISIBLE(message.visible);
-            for (BlockPos node : path) {
-                NodeHandler.ShowNode(node.up(6), world, message.visible, ModBlocks.WAYPOINT_LANTERN.get().getDefaultState());
+            if (WaypointHandler.getPath() != null) {
+                ArrayList<BlockPos> path = WaypointHandler.getPath();
+                // for every node in the path, set/remove a waypoint lantern 2 blocks up
+                AStarPathfinding.setVISIBLE(message.visible);
+                for (BlockPos node : path) {
+                    NodeHandler.ShowNode(node.up(6), world, message.visible, ModBlocks.WAYPOINT_LANTERN.get().getDefaultState());
+                }
+            } else {
+                context.getSender().sendStatusMessage(new TranslationTextComponent("message.no_path"),
+                        true);;
             }
         });
     }

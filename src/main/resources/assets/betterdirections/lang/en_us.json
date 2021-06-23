@@ -5,6 +5,7 @@
 
   "message.toggle_nodes": "Toggle Nodes Visibility",
   "message.toggle_path": "Toggle Path Visibility",
+  "message.no_path": "No Path Found",
 
   "key.category.betterdirections": "Better Directions",
 
@@ -26,5 +27,5 @@
   "gui.betterdirections.configgui.ignorewater.title": "Ignore water when calculating path",
   "gui.betterdirections.configgui.ignoreheightdifferencedown.title": "Ignore height difference going down",
   "gui.betterdirections.configgui.ignoreheightdifferenceup.title": "Ignore height difference going up",
-  "gui.betterdirections.configgui.allowheightdifference.title": "Allow height difference"
+  "gui.betterdirections.configgui.mazemode.title": "Toggle Maze Mode"
 }

@@ -84,9 +84,9 @@ public class ConfigScreen extends Screen {
         // Add a BooleanOption to the optionsRowList, with this BooleanOption you will be able to toggle if the
         // algorithm takes the height difference going up into account when calculating a path
         this.optionsRowList.addOption(new BooleanOption("gui." + BetterDirections.MOD_ID +
-                ".configgui.allowheightdifference.title",
-                unused -> CMI.AllowHeightDifference(),
-                (unused, newValue) -> CMI.changeAllowheightDifference(newValue)
+                ".configgui.mazemode.title",
+                unused -> CMI.MazeMode(),
+                (unused, newValue) -> CMI.changeMazeMode(newValue)
         ));
 
         // Add the options row list as this screen's child

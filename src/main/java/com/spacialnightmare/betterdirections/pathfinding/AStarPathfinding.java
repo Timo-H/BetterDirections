@@ -115,8 +115,8 @@ public class AStarPathfinding {
             heuristic += diagonalStep * ZDifference;
             heuristic += standardStep * (XDifference - ZDifference);
         }
-        // add a value to the heuristic based on the height difference (optional)
-        if (CMI.AllowHeightDifference()) {
+        // add a value to the heuristic based on the height difference (if maze mode is off)
+        if (!CMI.MazeMode()) {
             if (YDifference > 1) {
                 heuristic += YDifference * 5;
             }
@@ -157,15 +157,15 @@ public class AStarPathfinding {
                 Node newNode = new Node(matchingNode, GCost, Heuristic(matchingNode, endPos));
                 // add the newNode to the neighbours ArrayList
                 // if it doesnt have the same coordinates as the current node
-                if (CMI.AllowHeightDifference()) {
+                if (!CMI.MazeMode()) {
                     if (!newNode.equals(current)) {
                         neighbours.add(newNode);
                     }
                 } else {
-                    if (newNode.getLoc().getY() == current.getLoc().getY()) {
-                        if (!newNode.equals(current)) {
-                            neighbours.add(newNode);
-                        }
+                    // if maze mode is on, check if height is the same
+                    if (newNode.getLoc().getY() == current.getLoc().getY() &&
+                        !newNode.equals(current)) {
+                                neighbours.add(newNode);
                     }
                 }
             }
@@ -202,8 +202,8 @@ public class AStarPathfinding {
             // GCost for directly adjacent neighbors
             GCost += 10;
         }
-        // add a value to G-Cost based on the height difference (optional)
-        if (CMI.AllowHeightDifference()) {
+        // add a value to G-Cost based on the height difference (if maze mode is off)
+        if (!CMI.MazeMode()) {
             // add to the GCost the ((Height Difference -1) * 40) / distance between nodes, if it is 2 or higher
             // going uphill (optional)
             if (!CMI.IgnoreHeightDifferenceUp()) {
