@@ -48,7 +48,7 @@ public class AStarPathfinding {
             // for every neighbor of the current node
             ArrayList<Node> neighbours = getNeighbours(current, world, endPos);
             for (Node neighbor : neighbours) {
-                CheckNeighbor(neighbor, current, world);
+                CheckNeighbor(neighbor, current);
             }
         }
     }
@@ -74,7 +74,7 @@ public class AStarPathfinding {
         return false;
     }
 
-    public static void CheckNeighbor(Node neighbor, Node current, World world) {
+    public static void CheckNeighbor(Node neighbor, Node current) {
         // if neighbor is not in CLOSED
         if (!CLOSED.contains(neighbor)) {
             // if neighbor is in OPEN
